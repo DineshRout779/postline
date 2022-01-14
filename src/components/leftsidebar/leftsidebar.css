@@ -1,0 +1,27 @@
+.leftbar {
+  width: 20%;
+  min-height: 100vh;
+  padding: 1em;
+  border-right: 1px solid var(--dark-light-bg);
+}
+
+.leftbar a {
+  padding: 0.8em;
+  color: var(--white);
+  border-radius: 4px;
+  text-decoration: none;
+  display: flex;
+  margin: 0.5em 0;
+}
+
+.leftbar a.active {
+  background-color: rgb(39, 41, 42);
+}
+
+.leftbar a .icon {
+  margin-right: 0.5em;
+}
+
+.leftbar a:hover {
+  background-color: rgb(39, 41, 42);
+}

@@ -1,0 +1,24 @@
+.profile {
+  width: 100%;
+}
+
+.bgcover {
+  background-color: rgb(250, 110, 110);
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100px;
+  user-select: none;
+}
+
+.avatar-wapper {
+  position: relative;
+  top: -40px;
+}
+
+input {
+  display: block;
+  margin: 0.5em 0;
+  padding: 0.4em;
+}

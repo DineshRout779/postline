@@ -1,0 +1,74 @@
+.post {
+  width: 100%;
+  margin: 1em 0;
+  padding: 0.5em 1em 1em 1em;
+  box-shadow: 0 0 5px 0 #111;
+  color: var(--white);
+  text-decoration: none;
+  border-radius: 4px;
+  display: flex;
+  position: relative;
+}
+
+.post:hover {
+  background-color: var(--dark-light-bg);
+}
+
+.post a {
+  color: var(--white);
+  text-decoration: none;
+}
+
+.post a:hover {
+  text-decoration: underline;
+}
+
+.post h4 {
+  margin: 0;
+}
+
+.flex-grow-1 {
+  flex-grow: 1;
+}
+
+.post .avatar {
+  margin-top: 0.4em;
+}
+
+.post .option {
+  padding: 0.2em;
+}
+
+.menu {
+  position: absolute;
+  right: 3.2em;
+  top: 0.5em;
+  display: flex;
+  flex-direction: column;
+  padding: 0.5em 0;
+  background-color: black;
+  border-radius: 4px;
+}
+
+.menu button {
+  background-color: transparent;
+  color: var(--white);
+  border: none;
+  outline: none;
+  padding: 0.5em 1em;
+  cursor: pointer;
+}
+
+.menu button:hover {
+  background-color: var(--dark-light-bg);
+}
+
+button + button {
+  border: 1px solid white;
+}
+
+textarea {
+  border: 1px solid var(--dark-light-bg);
+  padding: 0.5em;
+  border-radius: 4px;
+}

@@ -1,0 +1,7 @@
+.rightbar {
+  position: sticky;
+  top: 2em;
+  flex-grow: 1;
+  height: 100vh;
+  padding: 1em;
+}
