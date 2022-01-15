@@ -27,7 +27,7 @@ const NewPost = ({ addPost }) => {
     <form className='flex px-1' onSubmit={handleSubmit}>
       <Avatar />
       <div style={{ flexGrow: 1 }}>
-        <h4>Hey {user.username.split(' ')[0]}!</h4>
+        <h4>Hey {user ? user.username.split(' ')[0] : 'User'}!</h4>
         <textarea
           name='desc'
           id='desc'
