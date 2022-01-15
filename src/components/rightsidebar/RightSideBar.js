@@ -1,58 +1,67 @@
+/* eslint-disable array-callback-return */
+import axios from 'axios';
+import { useEffect, useState } from 'react';
 import Following from '../following/Following';
-import Poeple from '../people/Poeple';
+import PeopleList from '../peoplelist/PeopleList';
+import Spinner from '../spinner/Spinner';
 import './rightsidebar.css';
 
-const allUsers = [
-  {
-    _id: '61dd2413cee9934ed925a6b2',
-    username: 'Dinesh',
-    email: 'din@gmail.com',
-    password: '$2b$10$7zvM4AUvCA1qjh8411ptMOCGcWlGqZWbSZlOovT4Bc/BeoRi1gxKi',
-    profilePic: '',
-    coverPic: '',
-    followers: ['61dd2424cee9934ed925a6b5'],
-    following: ['61dd2424cee9934ed925a6b5'],
-    isAdmin: false,
-    createdAt: '2022-01-11T06:30:43.080Z',
-    updatedAt: '2022-01-11T06:50:15.997Z',
-    __v: 0,
-  },
-  {
-    _id: '61dd2424cee9934ed925a6b5',
-    username: 'Rupam',
-    email: 'rupam@gmail.com',
-    password: '$2b$10$A5/Apkn9iYjzwceiRg3EWeKTzaS.gAf3jkzB.Yu6yM.E3NajPv2xS',
-    profilePic: '',
-    coverPic: '',
-    followers: ['61dd2413cee9934ed925a6b2'],
-    following: ['61dd2413cee9934ed925a6b2'],
-    isAdmin: false,
-    createdAt: '2022-01-11T06:31:00.753Z',
-    updatedAt: '2022-01-11T06:50:15.878Z',
-    __v: 0,
-  },
-];
+const RightSideBar = ({ user, max }) => {
+  const [list, setList] = useState([]);
+  const [followingList, setFollowingList] = useState([]);
+  const [isLoaded, setIsLoaded] = useState(false);
+  // const [followStatus, setFollowStatus] = useState(false);
 
-const currentUser = {
-  _id: '61dd2413cee9934ed925a6b2',
-  username: 'Dinesh',
-  email: 'din@gmail.com',
-  password: '$2b$10$7zvM4AUvCA1qjh8411ptMOCGcWlGqZWbSZlOovT4Bc/BeoRi1gxKi',
-  profilePic: '',
-  coverPic: '',
-  followers: ['61dd2424cee9934ed925a6b5'],
-  following: ['61dd2424cee9934ed925a6b5'],
-  isAdmin: false,
-  createdAt: '2022-01-11T06:30:43.080Z',
-  updatedAt: '2022-01-11T06:50:15.997Z',
-  __v: 0,
-};
+  const url = process.env.REACT_APP_API_URL;
 
-const RightSideBar = () => {
+  useEffect(() => {
+    const fetchData = async () => {
+      const fetchAllPeople = async () => {
+        return await axios.get(`${url}/users/`);
+      };
+      const fetchAllFollowing = async () => {
+        return await axios.get(`${url}/users/${user._id}/following`);
+      };
+      const res = await Promise.all([fetchAllPeople(), fetchAllFollowing()]);
+      setList(
+        res[0].data.filter((p) => {
+          if (p._id !== user._id && !user.following.includes(p._id)) return p;
+        })
+      );
+      setFollowingList(res[1].data);
+      setIsLoaded(true);
+    };
+    fetchData();
+  }, [url, user]);
+
+  // const followUser = async (id) => {
+  //   try {
+  //     await axios.put(`${url}/users/${id}/follow/`, { userId: user._id });
+  //     setList(
+  //       list.filter((u) => {
+  //         if (u._id !== id && !u.followers.includes(user._id)) return u;
+  //       })
+  //     );
+  //     dispatch({ type: 'FOLLOW', payload: user._id });
+  //   } catch (err) {
+  //     console.log(err);
+  //   }
+  // };
+
   return (
     <div className='rightbar'>
-      <Poeple allUsers={allUsers} currentUser={currentUser} />
-      <Following allUsers={allUsers} currentUser={currentUser} />
+      {isLoaded ? (
+        <>
+          <h2>People you may know</h2>
+          <PeopleList user={user} max={max} list={list} />
+          <h2>Following</h2>
+          <Following user={user} list={followingList} />
+        </>
+      ) : (
+        <div className='full-height flex justify-center align-center'>
+          <Spinner />
+        </div>
+      )}
     </div>
   );
 };

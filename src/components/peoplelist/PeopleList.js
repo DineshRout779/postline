@@ -1,12 +1,13 @@
 import { Link } from 'react-router-dom';
 import Avatar from '../avatar/Avatar';
+import './peoplelist.css';
 
-const Following = ({ user, list }) => {
+const PeopleList = ({ list, max }) => {
   return (
     <div>
       <ul>
         {list.length > 0 ? (
-          list.map((p) => {
+          list.slice(0, max ? max : list.length).map((p) => {
             return (
               <li className='flex justify-between align-center' key={p._id}>
                 <div className='flex align-center'>
@@ -19,14 +20,12 @@ const Following = ({ user, list }) => {
             );
           })
         ) : (
-          <p>
-            You're not following anyone.{' '}
-            <Link to={'people'}>Explore people</Link>
-          </p>
+          <p>No more users found!</p>
         )}
       </ul>
+      {max && <Link to={'people'}>View more</Link>}
     </div>
   );
 };
 
-export default Following;
+export default PeopleList;
