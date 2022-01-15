@@ -1,11 +1,25 @@
 import { useContext } from 'react';
-import { MdHome, MdLogout, MdPerson, MdSearch } from 'react-icons/md';
-import { NavLink } from 'react-router-dom';
+import {
+  MdHome,
+  MdLogout,
+  MdPeopleOutline,
+  MdPerson,
+  MdSearch,
+} from 'react-icons/md';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
 import './leftsidebar.css';
 
 const LeftSideBar = () => {
-  const { user } = useContext(AuthContext);
+  const { user, dispatch } = useContext(AuthContext);
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    dispatch({ type: 'LOGOUT' });
+    localStorage.removeItem('user');
+    navigate('/login', { replace: true });
+  };
+
   return (
     <div className='leftbar flex flex-column'>
       <NavLink to='/' className={({ isActive }) => (isActive ? 'active' : '')}>
@@ -22,14 +36,20 @@ const LeftSideBar = () => {
         ''
       )}
       <NavLink
+        to={'/people'}
+        className={({ isActive }) => (isActive ? 'active' : '')}
+      >
+        <MdPeopleOutline className='icon' /> People
+      </NavLink>
+      <NavLink
         to='/search'
         className={({ isActive }) => (isActive ? 'active' : '')}
       >
         <MdSearch className='icon' /> Search
       </NavLink>
-      <NavLink to={`/login`}>
+      <button className='btn-link' onClick={handleClick}>
         <MdLogout className='icon' /> Logout
-      </NavLink>
+      </button>
     </div>
   );
 };
