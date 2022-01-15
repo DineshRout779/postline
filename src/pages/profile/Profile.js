@@ -6,9 +6,10 @@ import axios from 'axios';
 import Posts from '../../components/posts/Posts';
 import { useParams } from 'react-router';
 import LeftSideBar from '../../components/leftsidebar/LeftSideBar';
-import RightSideBar from '../../components/rightsidebar/RightSideBar';
 import Navbar from '../../components/navbar/Navbar';
 import { AuthContext } from '../../context/AuthContext';
+
+const url = process.env.REACT_APP_API_URL;
 
 const Cover = ({ coverText, isEditing = false, onUpdate = (f) => f }) => {
   return (
@@ -53,14 +54,13 @@ const Intro = ({
   const followUser = async () => {
     try {
       if (isFollowing) {
-        await axios.put(
-          `http://localhost:5000/api/users/${user._id}/unfollow/`,
-          { userId: currentUser._id }
-        );
+        await axios.put(`${url}/users/${user._id}/unfollow/`, {
+          userId: currentUser._id,
+        });
         dispatch({ type: 'UNFOLLOW', payload: user._id });
         onToggle();
       } else {
-        await axios.put(`http://localhost:5000/api/users/${user._id}/follow/`, {
+        await axios.put(`${url}/users/${user._id}/follow/`, {
           userId: currentUser._id,
         });
         dispatch({ type: 'FOLLOW', payload: user._id });
@@ -72,7 +72,7 @@ const Intro = ({
   };
 
   const updateUser = async () => {
-    await axios.put(`http://localhost:5000/api/users/${user._id}`, {
+    await axios.put(`${url}/users/${user._id}`, {
       userId: user._id,
       coverPic: userData.coverText,
       username: userData.username,
@@ -143,6 +143,16 @@ const Intro = ({
             <h3>{userData.username}</h3>
             <small>{userData.email}</small>
             <p>Joined {new Date(user.createdAt).toDateString()}</p>
+            <div className='flex'>
+              <p>
+                <span className='text-bold'>{user.following.length}</span>{' '}
+                Following
+              </p>
+              <p>
+                <span className='text-bold'> {user.followers.length}</span>{' '}
+                Followers
+              </p>
+            </div>
           </>
         )}
       </div>
@@ -163,7 +173,7 @@ const Profile = () => {
 
   const updatePost = async (post, desc) => {
     try {
-      await axios.put(`http://localhost:5000/api/posts/${post._id}`, {
+      await axios.put(`${url}/posts/${post._id}`, {
         userId: currentUser._id,
         desc,
       });
@@ -176,7 +186,7 @@ const Profile = () => {
 
   const deletePost = async (post) => {
     try {
-      await axios.delete(`http://localhost:5000/api/posts/${post._id}`, {
+      await axios.delete(`${url}/posts/${post._id}`, {
         data: { userId: currentUser._id },
       });
       setPosts(posts.filter((p) => p._id !== post._id));
@@ -189,10 +199,10 @@ const Profile = () => {
   useEffect(() => {
     const fetchData = async (id) => {
       const fetchPosts = async (userId) => {
-        return await axios.get('http://localhost:5000/api/posts/');
+        return await axios.get(`${url}/posts/`);
       };
       const fetchUser = async (id) => {
-        return await axios.get(`http://localhost:5000/api/users/${id}`);
+        return await axios.get(`${url}/users/${id}`);
       };
       const res = await Promise.all([fetchUser(id), fetchPosts(id)]);
       setUser(res[0].data);
@@ -289,7 +299,6 @@ const Profile = () => {
             )}
           </div>
         </div>
-        <RightSideBar />
       </div>
     </>
   );

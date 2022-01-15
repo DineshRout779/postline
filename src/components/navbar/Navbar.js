@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import {
   MdHome,
   MdLogout,
@@ -11,37 +11,48 @@ import { useContext } from 'react';
 import { AuthContext } from '../../context/AuthContext';
 
 const Navbar = () => {
-  const { user } = useContext(AuthContext);
+  const { user, dispatch } = useContext(AuthContext);
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    dispatch({ type: 'LOGOUT' });
+    localStorage.removeItem('user');
+    navigate('/login', { replace: true });
+  };
+
   return (
-    <header>
-      <nav className='container nav flex justify-between align-center'>
-        <Link to={'/'} className='logo'>
-          Social
-        </Link>
-        {/* <SearchBar /> */}
-        <div className='nav-links flex'>
-          <Link to={'/'}>
-            <MdHome className='icon' />
-          </Link>
-          <Link to={'/people'}>
-            <MdPeopleOutline className='icon' />
-          </Link>
-          <Link to={'/search'}>
-            <MdSearch className='icon' />
-          </Link>
-          {user ? (
-            <Link to={`/profile/${user._id}`}>
-              <MdPerson className='icon' />
+    <>
+      {user && (
+        <header>
+          <nav className='container nav flex justify-between align-center'>
+            <Link to={'/'} className='logo'>
+              Social
             </Link>
-          ) : (
-            ''
-          )}
-          <Link to={`/login`}>
-            <MdLogout className='icon' />
-          </Link>
-        </div>
-      </nav>
-    </header>
+            <div className='nav-links flex'>
+              {user && (
+                <div>
+                  <Link to={'/'}>
+                    <MdHome className='icon' />
+                  </Link>
+                  <Link to={'/people'}>
+                    <MdPeopleOutline className='icon' />
+                  </Link>
+                  <Link to={'/search'}>
+                    <MdSearch className='icon' />
+                  </Link>
+                  <Link to={`/profile/${user._id}`}>
+                    <MdPerson className='icon' />
+                  </Link>
+                  <button className='btn-link' onClick={handleClick}>
+                    <MdLogout className='icon' />
+                  </button>
+                </div>
+              )}
+            </div>
+          </nav>
+        </header>
+      )}
+    </>
   );
 };
 

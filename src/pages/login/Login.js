@@ -1,9 +1,9 @@
 import { useContext, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
-import { loginCall } from '../../utils/apiCalls';
 import Spinner from '../../components/spinner/Spinner';
 import Navbar from '../../components/navbar/Navbar';
+import axios from 'axios';
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -11,7 +11,10 @@ const Login = () => {
     password: '',
   });
   const navigate = useNavigate();
+  const [msg, setMsg] = useState('');
+
   const { isFetching, dispatch } = useContext(AuthContext);
+  const url = process.env.REACT_APP_API_URL;
 
   const handleChange = (e) => {
     setFormData({
@@ -20,10 +23,24 @@ const Login = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    loginCall(formData, dispatch);
-    navigate('/');
+    setMsg('');
+    dispatch({ type: 'LOGIN_START' });
+    try {
+      const res = await axios.post(`${url}/auth/login/`, formData);
+      dispatch({ type: 'LOGIN_SUCCESS', payload: res.data.user });
+      navigate('/', { replace: true });
+    } catch (error) {
+      dispatch({ type: 'LOGIN_FAILURE', payload: error });
+      console.log(error.response);
+      if (error.response.status === 404) {
+        setMsg('User not registered!');
+      }
+      if (error.response.status === 403) {
+        setMsg('Invalid Credentials!');
+      }
+    }
   };
 
   return (
@@ -32,6 +49,7 @@ const Login = () => {
       <div className='container full-height flex justify-center align-center'>
         <form className='form' onSubmit={handleSubmit}>
           <h2>Login</h2>
+          <p className='text-center text-danger'>{msg ? msg : ''}</p>
           <div className='form-group'>
             <label htmlFor='email'>email</label>
             <input

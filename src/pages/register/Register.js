@@ -12,8 +12,10 @@ function Register() {
     email: '',
     password: '',
   });
+  const [msg, setMsg] = useState('');
   const navigate = useNavigate();
-  const { isFetching, dispatch } = useContext(AuthContext);
+  const { isFetching } = useContext(AuthContext);
+  const url = process.env.REACT_APP_API_URL;
 
   const handleChange = (e) => {
     setFormData({
@@ -23,12 +25,16 @@ function Register() {
   };
 
   const handleSubmit = async (e) => {
+    setMsg('');
     e.preventDefault();
     try {
-      await axios.post(`http://localhost:5000/api/auth/register/`, formData);
+      await axios.post(`${url}/auth/register/`, formData);
       navigate('/login');
-    } catch (err) {
-      console.log(err);
+    } catch (error) {
+      console.log(error.response);
+      if (error.response.status === 403) {
+        setMsg('User already exists!');
+      }
     }
   };
 
@@ -38,6 +44,7 @@ function Register() {
       <div className='container full-height flex justify-center align-center'>
         <form className='form' onSubmit={handleSubmit}>
           <h2>Register</h2>
+          <p className='text-center text-danger'>{msg ? msg : ''}</p>
           <div className='form-group'>
             <label htmlFor='name'>name</label>
             <input

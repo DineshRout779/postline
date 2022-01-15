@@ -9,6 +9,8 @@ import RightSideBar from '../../components/rightsidebar/RightSideBar';
 import Navbar from '../../components/navbar/Navbar';
 import { AuthContext } from '../../context/AuthContext';
 
+const url = process.env.REACT_APP_API_URL;
+
 const Home = () => {
   const [posts, setPosts] = useState([]);
   const [isLoaded, setIsLoaded] = useState(false);
@@ -17,7 +19,7 @@ const Home = () => {
 
   const addPost = async (post) => {
     try {
-      const res = await axios.post('http://localhost:5000/api/posts/', post);
+      const res = await axios.post(`${url}/posts/`, post);
       setPosts([...posts, res.data]);
     } catch (err) {
       console.log(err);
@@ -26,7 +28,7 @@ const Home = () => {
 
   const updatePost = async (post, desc) => {
     try {
-      await axios.put(`http://localhost:5000/api/posts/${post._id}`, {
+      await axios.put(`${url}/posts/${post._id}`, {
         userId: user._id,
         desc,
       });
@@ -39,7 +41,7 @@ const Home = () => {
 
   const deletePost = async (post) => {
     try {
-      await axios.delete(`http://localhost:5000/api/posts/${post._id}`, {
+      await axios.delete(`${url}/posts/${post._id}`, {
         data: { userId: user._id },
       });
       setPosts(posts.filter((p) => p._id !== post._id));
@@ -51,9 +53,7 @@ const Home = () => {
 
   useEffect(() => {
     const fetchPosts = async () => {
-      const res = await axios.get(
-        `http://localhost:5000/api/posts/timeline/${user._id}`
-      );
+      const res = await axios.get(`${url}/posts/timeline/${user._id}`);
       setPosts(res.data);
       setIsLoaded(true);
     };
@@ -64,7 +64,7 @@ const Home = () => {
     <>
       <Navbar />
       <div className='flex'>
-        <LeftSideBar user={user} />
+        <LeftSideBar />
         <div className='content'>
           <div>
             <h2 className='px-1'>Home</h2>
@@ -85,7 +85,7 @@ const Home = () => {
             </div>
           </div>
         </div>
-        <RightSideBar />
+        <RightSideBar user={user} max='5' />
       </div>
     </>
   );

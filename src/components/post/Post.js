@@ -20,19 +20,18 @@ const Post = ({ post, onUpdate, onDelete }) => {
 
   // check if posts belongs to the user logged in or not
   const isOwnPosts = post.userId === user._id;
+  const url = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
     const fetchUserOfPost = async () => {
-      const res = await axios.get(
-        `http://localhost:5000/api/users/${post.userId}`
-      );
+      const res = await axios.get(`${url}/users/${post.userId}`);
       setPostedBy(res.data.username);
     };
     fetchUserOfPost();
     return () => {
       setPostedBy(null);
     };
-  }, [post.userId]);
+  }, [post.userId, url]);
 
   useEffect(() => {
     setIsLiked(post.likes.includes(user._id));
@@ -40,7 +39,7 @@ const Post = ({ post, onUpdate, onDelete }) => {
 
   const handleToggleLike = () => {
     try {
-      axios.put(`http://localhost:5000/api/posts/${post._id}/like`, {
+      axios.put(`${url}/posts/${post._id}/like`, {
         userId: user._id,
       });
     } catch (err) {
