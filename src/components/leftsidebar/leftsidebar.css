@@ -14,14 +14,26 @@
   margin: 0.5em 0;
 }
 
+.leftbar button {
+  font-size: 1em;
+  cursor: pointer;
+  padding: 0.8em;
+  color: var(--white);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+}
+
 .leftbar a.active {
   background-color: rgb(39, 41, 42);
 }
 
-.leftbar a .icon {
+.leftbar a .icon,
+.leftbar button .icon {
   margin-right: 0.5em;
 }
 
-.leftbar a:hover {
+.leftbar a:hover,
+.leftbar button:hover {
   background-color: rgb(39, 41, 42);
 }

@@ -22,3 +22,7 @@ input {
   margin: 0.5em 0;
   padding: 0.4em;
 }
+
+.flex p + .flex p {
+  margin-right: 1em;
+}

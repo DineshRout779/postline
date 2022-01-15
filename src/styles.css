@@ -79,6 +79,10 @@ img {
   text-align: center;
 }
 
+.text-danger {
+  color: var(--danger);
+}
+
 .text-bold {
   font-weight: bold;
 }
@@ -102,6 +106,11 @@ img {
 
 .btn + .btn {
   margin-left: 1em;
+}
+
+.btn-link {
+  background-color: transparent;
+  border: none;
 }
 
 .btn-primary {
@@ -151,8 +160,16 @@ img {
   padding: 0 1em;
 }
 
+.px-half {
+  padding: 0 0.5em;
+}
+
+.px-2 {
+  padding: 0 2em;
+}
+
 .py-1 {
-  padding: 0.5em 0;
+  padding: 1em 0;
 }
 
 .p-1 {
