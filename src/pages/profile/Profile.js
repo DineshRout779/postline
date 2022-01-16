@@ -173,10 +173,14 @@ const Profile = () => {
 
   const updatePost = async (post, desc) => {
     try {
-      await axios.put(`${url}/posts/${post._id}`, {
-        userId: currentUser._id,
-        desc,
-      });
+      await axios.put(
+        `${url}/posts/${post._id}`,
+        {
+          userId: currentUser._id,
+          desc,
+        }
+        // { headers: { Authorization: `Bearer ${token}` } }
+      );
       setPosts(posts.map((p) => (p._id === post._id ? { ...p, desc } : p)));
       return true;
     } catch (err) {

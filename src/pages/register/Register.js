@@ -6,6 +6,8 @@ import Navbar from '../../components/navbar/Navbar';
 import Spinner from '../../components/spinner/Spinner';
 import { AuthContext } from '../../context/AuthContext';
 
+const url = process.env.REACT_APP_API_URL;
+
 function Register() {
   const [formData, setFormData] = useState({
     username: '',
@@ -15,7 +17,6 @@ function Register() {
   const [msg, setMsg] = useState('');
   const navigate = useNavigate();
   const { isFetching } = useContext(AuthContext);
-  const url = process.env.REACT_APP_API_URL;
 
   const handleChange = (e) => {
     setFormData({
@@ -25,16 +26,15 @@ function Register() {
   };
 
   const handleSubmit = async (e) => {
-    setMsg('');
     e.preventDefault();
+    setMsg('');
+
     try {
       await axios.post(`${url}/auth/register/`, formData);
       navigate('/login');
     } catch (error) {
       console.log(error.response);
-      if (error.response.status === 403) {
-        setMsg('User already exists!');
-      }
+      setMsg(error.response.data.error);
     }
   };
 
