@@ -5,16 +5,16 @@ import Spinner from '../../components/spinner/Spinner';
 import Navbar from '../../components/navbar/Navbar';
 import axios from 'axios';
 
+const url = process.env.REACT_APP_API_URL;
+
 const Login = () => {
   const [formData, setFormData] = useState({
     email: '',
     password: '',
   });
-  const navigate = useNavigate();
   const [msg, setMsg] = useState('');
-
+  const navigate = useNavigate();
   const { isFetching, dispatch } = useContext(AuthContext);
-  const url = process.env.REACT_APP_API_URL;
 
   const handleChange = (e) => {
     setFormData({
@@ -32,24 +32,25 @@ const Login = () => {
       dispatch({ type: 'LOGIN_SUCCESS', payload: res.data.user });
       navigate('/', { replace: true });
     } catch (error) {
-      dispatch({ type: 'LOGIN_FAILURE', payload: error });
-      console.log(error.response);
-      if (error.response.status === 404) {
-        setMsg('User not registered!');
-      }
-      if (error.response.status === 403) {
-        setMsg('Invalid Credentials!');
-      }
+      dispatch({ type: 'LOGIN_FAILURE', payload: error.response.data.error });
+      setMsg(error.response.data.error);
     }
+  };
+
+  const loginAsGuest = () => {
+    setFormData({
+      email: 'guest@email.com',
+      password: 'ca06eb9ad6d4c83c334288424549d910ca9a32ae',
+    });
   };
 
   return (
     <>
       <Navbar />
-      <div className='container full-height flex justify-center align-center'>
-        <form className='form' onSubmit={handleSubmit}>
+      <div className='container full-height flex justify-center align-center flex-column'>
+        <form className='form' onSubmit={handleSubmit} autoComplete='off'>
           <h2>Login</h2>
-          <p className='text-center text-danger'>{msg ? msg : ''}</p>
+          <p className='text-center text-accent'>{msg ? msg : ''}</p>
           <div className='form-group'>
             <label htmlFor='email'>email</label>
             <input
@@ -91,6 +92,12 @@ const Login = () => {
           <p className='text-center'>
             Don't have an account ? <Link to='/register'>Register</Link>
           </p>
+          <button
+            onClick={loginAsGuest}
+            className='form-control  btn btn-secondary text-center'
+          >
+            Login as a guest
+          </button>
         </form>
       </div>
     </>
