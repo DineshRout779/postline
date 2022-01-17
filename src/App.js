@@ -9,7 +9,8 @@ import { AuthContext } from './context/AuthContext';
 import { useContext } from 'react';
 import People from './pages/people/People';
 
-function App() {
+const App = () => {
+  const { user } = useContext(AuthContext);
   return (
     <AuthContextProvider>
       <Routes>
@@ -46,13 +47,19 @@ function App() {
             </PrivateRoute>
           }
         />
-        <Route path='login' element={<Login />} />
-        <Route path='register' element={<Register />} />
+        <Route
+          path='login'
+          element={user ? <Navigate to={'/'} /> : <Login />}
+        />
+        <Route
+          path='register'
+          element={user ? <Navigate to={'/'} /> : <Register />}
+        />
         <Route path='*' element={<Navigate to={'/login'} />} />
       </Routes>
     </AuthContextProvider>
   );
-}
+};
 
 const PrivateRoute = ({ children }) => {
   const { user } = useContext(AuthContext);
