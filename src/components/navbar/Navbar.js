@@ -28,9 +28,9 @@ const Navbar = () => {
             <Link to={'/'} className='logo'>
               Social
             </Link>
-            <div className='nav-links flex'>
+            <div className='nav-links flex justify-between align-center'>
               {user && (
-                <div>
+                <>
                   <NavLink
                     to='/'
                     className={({ isActive }) => (isActive ? 'active' : '')}
@@ -62,7 +62,7 @@ const Navbar = () => {
                   <button className='btn-link' onClick={handleClick}>
                     <MdLogout className='icon' />
                   </button>
-                </div>
+                </>
               )}
             </div>
           </nav>

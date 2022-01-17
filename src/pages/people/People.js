@@ -36,7 +36,7 @@ const People = () => {
           <div>
             {isLoaded ? (
               <>
-                <h2 className='px-half'>People you may follow</h2>
+                <h2 className='px-1'>People you may follow</h2>
                 <div className='px-1 my-2'>
                   <PeopleList user={user} list={list} />
                 </div>

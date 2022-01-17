@@ -23,7 +23,7 @@ header {
 }
 
 .search {
-  width: 40%;
+  width: 100%;
   padding: 0.2em;
   border: 1px solid rgb(119, 108, 108);
   display: flex;
