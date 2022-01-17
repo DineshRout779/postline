@@ -1,9 +1,9 @@
 import { MdSearch } from 'react-icons/md';
 
-function SearchBar() {
+function SearchBar({ value, onChange }) {
   return (
     <div className='search'>
-      <input type='text' />
+      <input type='text' value={value} onChange={onChange} />
       <MdSearch className='icon' />
     </div>
   );
