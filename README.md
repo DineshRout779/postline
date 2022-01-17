@@ -4,7 +4,27 @@ A social media app made with MERN stack.
 
 ## Screenshot
 
-![alt text]()
+![alt text](https://raw.githubusercontent.com/DineshRout779/social-media-react/main/public/assets/images/social-media.png)
+
+## Features
+
+- Authentication
+  - login/logout
+  - signup
+- Create post
+- Update post
+- Delete post
+- Read own/followed users' post
+- Like/unlike posts
+- Follow/unfollow users
+
+## Upcoming features
+
+- search users
+
+## More
+
+Backend of this project can be found [here](https://github.com/DineshRout779/social-media-api)
 
 # Getting Started with Create React App
 
