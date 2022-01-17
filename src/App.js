@@ -14,6 +14,7 @@ function App() {
     <AuthContextProvider>
       <Routes>
         <Route
+          index
           path='/'
           element={
             <PrivateRoute>
