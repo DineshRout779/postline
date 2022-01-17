@@ -1,4 +1,4 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
 import {
   MdHome,
   MdLogout,
@@ -31,18 +31,34 @@ const Navbar = () => {
             <div className='nav-links flex'>
               {user && (
                 <div>
-                  <Link to={'/'}>
+                  <NavLink
+                    to='/'
+                    className={({ isActive }) => (isActive ? 'active' : '')}
+                  >
                     <MdHome className='icon' />
-                  </Link>
-                  <Link to={'/people'}>
+                  </NavLink>
+                  <NavLink
+                    to={'/people'}
+                    className={({ isActive }) => (isActive ? 'active' : '')}
+                  >
                     <MdPeopleOutline className='icon' />
-                  </Link>
-                  <Link to={'/search'}>
+                  </NavLink>
+                  <NavLink
+                    to='/search'
+                    className={({ isActive }) => (isActive ? 'active' : '')}
+                  >
                     <MdSearch className='icon' />
-                  </Link>
-                  <Link to={`/profile/${user._id}`}>
-                    <MdPerson className='icon' />
-                  </Link>
+                  </NavLink>
+                  {user ? (
+                    <NavLink
+                      to={'/profile/' + user._id}
+                      className={({ isActive }) => (isActive ? 'active' : '')}
+                    >
+                      <MdPerson className='icon' />
+                    </NavLink>
+                  ) : (
+                    ''
+                  )}
                   <button className='btn-link' onClick={handleClick}>
                     <MdLogout className='icon' />
                   </button>

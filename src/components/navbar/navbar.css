@@ -18,6 +18,10 @@ header {
   color: var(--white);
 }
 
+.nav a.active .icon {
+  color: var(--accent);
+}
+
 .search {
   width: 40%;
   padding: 0.2em;
@@ -53,4 +57,8 @@ header {
 
 .nav .icon {
   margin: 0 0.4em;
+}
+
+.btn-link {
+  cursor: pointer;
 }
