@@ -9,6 +9,8 @@ import { AuthContext } from '../../context/AuthContext';
 import axios from 'axios';
 import PeopleList from '../../components/peoplelist/PeopleList';
 
+const url = process.env.REACT_APP_API_URL;
+
 function Search() {
   const { user } = useContext(AuthContext);
   const [search, setSearch] = useState('');
@@ -21,9 +23,7 @@ function Search() {
   useEffect(() => {
     const handleSearch = async () => {
       try {
-        const res = await axios.get(
-          `http://localhost:5000/api/users?username=${search}`
-        );
+        const res = await axios.get(`${url}/users?username=${search}`);
         setResult(res.data);
       } catch (error) {
         console.log(error);
@@ -31,6 +31,7 @@ function Search() {
     };
     handleSearch();
   }, [search]);
+
   return (
     <>
       <Navbar />
