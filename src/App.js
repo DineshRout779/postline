@@ -8,6 +8,7 @@ import { AuthContextProvider } from './context/AuthContext';
 import { AuthContext } from './context/AuthContext';
 import { useContext } from 'react';
 import People from './pages/people/People';
+import NotFound from './pages/notfound/NotFound';
 
 const App = () => {
   const { user } = useContext(AuthContext);
@@ -55,7 +56,7 @@ const App = () => {
           path='register'
           element={user ? <Navigate to={'/'} /> : <Register />}
         />
-        <Route path='*' element={<Navigate to={'/login'} />} />
+        <Route path='*' element={<NotFound />} />
       </Routes>
     </AuthContextProvider>
   );
