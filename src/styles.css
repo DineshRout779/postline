@@ -12,7 +12,7 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: sans-serif;
+  font-family: 'Poppins', sans-serif;
   list-style: none;
 }
 
@@ -37,6 +37,16 @@ h4 {
 img {
   display: block;
   width: 100%;
+}
+
+.svg {
+  width: 100%;
+  max-width: 360px;
+  margin: 0 auto;
+}
+
+p {
+  font-family: sans-serif;
 }
 
 .container {
@@ -86,6 +96,12 @@ img {
 
 .text-bold {
   font-weight: bold;
+}
+
+.text-big {
+  font-size: 5em;
+  margin: 0;
+  letter-spacing: 16px;
 }
 
 .text-gray {
@@ -186,9 +202,40 @@ img {
   padding: 0.6em;
   background-color: transparent;
   border: 1px solid var(--dark-light-bg);
+  outline: none;
   font-size: 16px;
   color: var(--white);
   border-radius: 4px;
+  transition: 0.2s border ease-in;
+}
+
+.form-control:focus {
+  border-color: var(--white);
+}
+
+.search {
+  width: 100%;
+  padding: 0.2em;
+  border: 1px solid rgb(119, 108, 108);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 4px;
+  transition: 0.2s border ease-in;
+}
+
+.search:focus-within {
+  border-color: var(--white);
+}
+
+.search input {
+  width: 100%;
+  padding: 0.6em;
+  margin-right: 1em;
+  background-color: transparent;
+  border: none;
+  outline: none;
+  color: white;
 }
 
 /* media queries */

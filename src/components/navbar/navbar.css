@@ -22,31 +22,6 @@ header {
   color: var(--accent);
 }
 
-.search {
-  width: 100%;
-  padding: 0.2em;
-  border: 1px solid rgb(119, 108, 108);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-radius: 4px;
-  transition: 0.2s border ease-in;
-}
-
-.search:focus-within {
-  border-color: var(--white);
-}
-
-.search input {
-  width: 100%;
-  padding: 0.6em;
-  margin-right: 1em;
-  background-color: transparent;
-  border: none;
-  outline: none;
-  color: white;
-}
-
 .icon {
   font-size: 1.5em;
   color: aliceblue;

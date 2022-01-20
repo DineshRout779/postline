@@ -82,7 +82,7 @@ const Login = () => {
             >
               {isFetching ? (
                 <div className='flex justify-center align-center'>
-                  <Spinner s={'18'} />
+                  <Spinner s={'18'} color='white' />
                 </div>
               ) : (
                 'Login'

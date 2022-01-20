@@ -38,8 +38,7 @@ function Search() {
       <div className='flex'>
         <LeftSideBar />
         <div className='content'>
-          <h2 className='px-1'>Search</h2>
-          <div className='px-1'>
+          <div className='p-1'>
             <SearchBar value={search} onChange={handleChange} />
             <PeopleList list={result} />
           </div>
