@@ -4,7 +4,7 @@ import LeftSideBar from '../../components/leftsidebar/LeftSideBar';
 import RightSideBar from '../../components/rightsidebar/RightSideBar';
 import Navbar from '../../components/navbar/Navbar';
 import SearchBar from '../../components/searchbar/SearchBar';
-import { useContext, useEffect, useState } from 'react';
+import { useCallback, useContext, useState } from 'react';
 import { AuthContext } from '../../context/AuthContext';
 import axios from 'axios';
 import PeopleList from '../../components/peoplelist/PeopleList';
@@ -16,21 +16,33 @@ function Search() {
   const [search, setSearch] = useState('');
   const [result, setResult] = useState([]);
 
-  const handleChange = (e) => {
-    setSearch(e.target.value);
+  // debounce function to minimize frequent function calls
+  const debounce = (callback, wait) => {
+    let timeoutId = null;
+    return (...args) => {
+      clearTimeout(timeoutId);
+      timeoutId = window.setTimeout(() => {
+        callback.apply(null, args);
+      }, wait);
+    };
   };
 
-  useEffect(() => {
-    const handleSearch = async () => {
+  const handleSearch = useCallback(
+    debounce(async (searchText) => {
       try {
-        const res = await axios.get(`${url}/users?username=${search}`);
+        const res = await axios.get(`${url}/users?username=${searchText}`);
         setResult(res.data);
       } catch (error) {
         console.log(error);
       }
-    };
-    handleSearch();
-  }, [search]);
+    }, 1000),
+    []
+  );
+
+  const handleChange = (e) => {
+    setSearch(e.target.value);
+    handleSearch(e.target.value);
+  };
 
   return (
     <>
