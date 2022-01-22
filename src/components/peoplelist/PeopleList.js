@@ -20,7 +20,7 @@ const PeopleList = ({ list, max }) => {
             );
           })
         ) : (
-          <p>No more users found!</p>
+          <p>No users found!</p>
         )}
       </ul>
       {max && <Link to={'people'}>View more</Link>}
