@@ -4,7 +4,7 @@ import LeftSideBar from '../../components/leftsidebar/LeftSideBar';
 import RightSideBar from '../../components/rightsidebar/RightSideBar';
 import Navbar from '../../components/navbar/Navbar';
 import SearchBar from '../../components/searchbar/SearchBar';
-import { useCallback, useContext, useState } from 'react';
+import { useContext, useState } from 'react';
 import { AuthContext } from '../../context/AuthContext';
 import axios from 'axios';
 import PeopleList from '../../components/peoplelist/PeopleList';
