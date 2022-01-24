@@ -217,7 +217,6 @@ const Profile = () => {
         },
         { headers: { Authorization: `Bearer ${currentUser.token}` } }
       );
-      console.log(res);
       setPosts(posts.map((p) => (p._id === post._id ? { ...p, desc } : p)));
       return true;
     } catch (err) {
