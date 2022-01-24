@@ -15,15 +15,18 @@ const Cover = ({ coverText, isEditing = false, onUpdate = (f) => f }) => {
   return (
     <div className='bgcover'>
       {isEditing ? (
-        <input
-          type='text'
-          name='coverText'
-          value={coverText}
-          placeholder={'Enter your cover Intro here...'}
-          onChange={onUpdate}
-        />
+        <div className='form-group'>
+          <input
+            type='text'
+            name='coverText'
+            value={coverText}
+            placeholder={'Enter your cover Intro here...'}
+            onChange={onUpdate}
+            className={'form-control'}
+          />
+        </div>
       ) : (
-        <p>{coverText}</p>
+        <h3>{coverText}</h3>
       )}
     </div>
   );
@@ -42,6 +45,7 @@ const Intro = ({
     coverText: user.coverPic ? user.coverPic : `Hello, I'm ${user.username}`,
     username: user.username,
     email: user.email,
+    password: '',
   });
 
   const handleChange = (e) => {
@@ -72,13 +76,21 @@ const Intro = ({
   };
 
   const updateUser = async () => {
-    await axios.put(`${url}/users/${user._id}`, {
-      userId: user._id,
-      coverPic: userData.coverText,
-      username: userData.username,
-      email: userData.email,
-    });
-    onToggle();
+    try {
+      await axios.put(
+        `${url}/users/${user._id}`,
+        {
+          userId: user._id,
+          coverPic: userData.coverText,
+          username: userData.username,
+          email: userData.email,
+        },
+        { headers: { Authorization: `Bearer ${currentUser.token}` } }
+      );
+      onToggle();
+    } catch (error) {
+      console.log(error.response);
+    }
   };
 
   return (
@@ -125,18 +137,42 @@ const Intro = ({
       <div className='p-1'>
         {isEditing ? (
           <>
-            <input
-              type='text'
-              name='username'
-              value={userData.username}
-              onChange={handleChange}
-            />
-            <input
-              type='email'
-              name='email'
-              value={userData.email}
-              onChange={handleChange}
-            />
+            <div className='form-group'>
+              <label htmlFor='username'>Username</label>
+              <input
+                type='text'
+                name='username'
+                id={'username'}
+                value={userData.username}
+                onChange={handleChange}
+                className={'form-control'}
+              />
+            </div>
+            <div className='form-group'>
+              <label htmlFor='email'>email</label>
+              <input
+                type='email'
+                name='email'
+                id={'email'}
+                value={userData.email}
+                onChange={handleChange}
+                className={'form-control'}
+              />
+            </div>
+            <div className='form-group'>
+              <label htmlFor='password'>
+                password <small>(Leave empty if don't want to change)</small>
+              </label>
+              <input
+                type='password'
+                name='password'
+                id={'password'}
+                value={userData.password}
+                onChange={handleChange}
+                className={'form-control'}
+                placeholder={'Enter new password'}
+              />
+            </div>
           </>
         ) : (
           <>
@@ -173,14 +209,15 @@ const Profile = () => {
 
   const updatePost = async (post, desc) => {
     try {
-      await axios.put(
+      const res = await axios.put(
         `${url}/posts/${post._id}`,
         {
           userId: currentUser._id,
           desc,
-        }
-        // { headers: { Authorization: `Bearer ${token}` } }
+        },
+        { headers: { Authorization: `Bearer ${currentUser.token}` } }
       );
+      console.log(res);
       setPosts(posts.map((p) => (p._id === post._id ? { ...p, desc } : p)));
       return true;
     } catch (err) {
@@ -190,9 +227,13 @@ const Profile = () => {
 
   const deletePost = async (post) => {
     try {
-      await axios.delete(`${url}/posts/${post._id}`, {
-        data: { userId: currentUser._id },
-      });
+      await axios.delete(
+        `${url}/posts/${post._id}`,
+        {
+          data: { userId: currentUser._id },
+        },
+        { headers: { Authorization: `Bearer ${currentUser.token}` } }
+      );
       setPosts(posts.filter((p) => p._id !== post._id));
       return true;
     } catch (err) {
@@ -238,7 +279,6 @@ const Profile = () => {
         <LeftSideBar />
         <div className='content flex'>
           <div className='profile'>
-            <h2 className='px-1'>Profile</h2>
             {!isLoaded ? (
               <div className='height-50'>
                 <Spinner />
@@ -251,6 +291,7 @@ const Profile = () => {
                       <div>
                         <Intro
                           user={user}
+                          currentUser={currentUser}
                           isOwnProfile={isOwnProfile}
                           isFollowing={isFollowing}
                           isEditing={isEditing}
