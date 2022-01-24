@@ -5,7 +5,7 @@
   --white: #eeeeee;
   --accent: #e94747;
   --success: #166e2c;
-  --danger: #ff2f2f;
+  --danger: #ff5050;
 }
 
 * {
@@ -196,9 +196,15 @@ p {
   letter-spacing: 2px;
 }
 
+small {
+  color: gray;
+  text-transform: lowercase;
+}
+
 .form-control {
   display: block;
   width: 100%;
+  max-width: 480px;
   padding: 0.6em;
   background-color: transparent;
   border: 1px solid var(--dark-light-bg);
