@@ -17,31 +17,32 @@ function Search() {
   const [result, setResult] = useState([]);
 
   // debounce function to minimize frequent function calls
-  const debounce = (callback, wait) => {
-    let timeoutId = null;
-    return (...args) => {
-      clearTimeout(timeoutId);
-      timeoutId = window.setTimeout(() => {
-        callback.apply(null, args);
-      }, wait);
+  const debounce = (func, wait) => {
+    let timeout;
+    return function executedFunction(...args) {
+      const later = () => {
+        timeout = null;
+        func(...args);
+      };
+      clearTimeout(timeout);
+      timeout = setTimeout(later, wait);
     };
   };
 
-  const handleSearch = useCallback(
-    debounce(async (searchText) => {
-      try {
-        const res = await axios.get(`${url}/users?username=${searchText}`);
-        setResult(res.data);
-      } catch (error) {
-        console.log(error);
-      }
-    }, 1000),
-    []
-  );
+  const searchUser = async () => {
+    try {
+      const res = await axios.get(`${url}/users?username=${search}`);
+      setResult(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleSearch = debounce(() => searchUser());
 
   const handleChange = (e) => {
     setSearch(e.target.value);
-    handleSearch(e.target.value);
+    handleSearch();
   };
 
   return (
