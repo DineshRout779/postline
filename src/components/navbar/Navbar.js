@@ -17,7 +17,7 @@ const Navbar = () => {
   const handleClick = () => {
     dispatch({ type: 'LOGOUT' });
     localStorage.removeItem('user');
-    navigate('/login', { replace: true });
+    navigate('/login');
   };
 
   return (

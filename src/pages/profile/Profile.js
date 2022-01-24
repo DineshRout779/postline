@@ -209,7 +209,7 @@ const Profile = () => {
 
   const updatePost = async (post, desc) => {
     try {
-      const res = await axios.put(
+      await axios.put(
         `${url}/posts/${post._id}`,
         {
           userId: currentUser._id,
