@@ -1,14 +1,13 @@
 import './search.css';
-// import Spinner from '../../components/spinner/Spinner';
 import LeftSideBar from '../../components/leftsidebar/LeftSideBar';
 import RightSideBar from '../../components/rightsidebar/RightSideBar';
 import Navbar from '../../components/navbar/Navbar';
 import SearchBar from '../../components/searchbar/SearchBar';
-import { useContext, useState } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
 import { AuthContext } from '../../context/AuthContext';
-import axios from 'axios';
 import PeopleList from '../../components/peoplelist/PeopleList';
-
+import debounce from 'lodash.debounce';
+import axios from 'axios';
 const url = process.env.REACT_APP_API_URL;
 
 function Search() {
@@ -17,19 +16,8 @@ function Search() {
   const [result, setResult] = useState([]);
 
   // debounce function to minimize frequent function calls
-  const debounce = (func, wait) => {
-    let timeout;
-    return function executedFunction(...args) {
-      const later = () => {
-        timeout = null;
-        func(...args);
-      };
-      clearTimeout(timeout);
-      timeout = setTimeout(later, wait);
-    };
-  };
-
-  const searchUser = async () => {
+  const searchUser = async (search) => {
+    console.log(search);
     try {
       const res = await axios.get(`${url}/users?username=${search}`);
       setResult(res.data);
@@ -38,12 +26,19 @@ function Search() {
     }
   };
 
-  const handleSearch = debounce(() => searchUser());
-
   const handleChange = (e) => {
     setSearch(e.target.value);
-    handleSearch();
   };
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const debouncedSearch = useCallback(debounce(searchUser, 500), [search]);
+
+  useEffect(() => {
+    if (search.length > 0) debouncedSearch(search);
+    return () => {
+      debouncedSearch.cancel();
+    };
+  }, [search, debouncedSearch]);
 
   return (
     <>
@@ -53,7 +48,7 @@ function Search() {
         <div className='content'>
           <div className='p-1'>
             <SearchBar value={search} onChange={handleChange} />
-            <PeopleList list={result} />
+            <PeopleList list={result} message={'no-message'} />
           </div>
         </div>
         <RightSideBar user={user} max='5' />

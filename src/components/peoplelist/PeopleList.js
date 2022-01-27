@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import Avatar from '../avatar/Avatar';
 import './peoplelist.css';
 
-const PeopleList = ({ list, max }) => {
+const PeopleList = ({ list, max, message }) => {
   return (
     <div>
       <ul>
@@ -20,7 +20,7 @@ const PeopleList = ({ list, max }) => {
             );
           })
         ) : (
-          <p>No users found!</p>
+          <p>{message ? '' : 'No users found!'}</p>
         )}
       </ul>
       {max && <Link to={'people'}>View more</Link>}
