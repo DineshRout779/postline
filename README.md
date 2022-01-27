@@ -17,10 +17,11 @@ A social media app made with MERN stack.
 - Read own/followed users' post
 - Like/unlike posts
 - Follow/unfollow users
+- search users
 
 ## Upcoming features
 
-- search users
+
 
 ## More
 
