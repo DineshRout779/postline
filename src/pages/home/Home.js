@@ -2,12 +2,12 @@ import { useContext, useEffect, useState } from 'react';
 import NewPost from '../../components/newpost/NewPost';
 import Posts from '../../components/posts/Posts';
 import axios from 'axios';
-import './home.css';
 import Spinner from '../../components/spinner/Spinner';
 import LeftSideBar from '../../components/leftsidebar/LeftSideBar';
 import RightSideBar from '../../components/rightsidebar/RightSideBar';
 import Navbar from '../../components/navbar/Navbar';
 import { AuthContext } from '../../context/AuthContext';
+import './home.css';
 
 const url = process.env.REACT_APP_API_URL;
 
@@ -22,20 +22,24 @@ const Home = () => {
       const res = await axios.post(`${url}/posts/`, post);
       setPosts([...posts, res.data]);
     } catch (err) {
-      console.log(err);
+      console.log(err.response);
     }
   };
 
   const updatePost = async (post, desc) => {
     try {
-      await axios.put(`${url}/posts/${post._id}`, {
-        userId: user._id,
-        desc,
-      });
+      await axios.put(
+        `${url}/posts/${post._id}`,
+        {
+          userId: user._id,
+          desc,
+        },
+        { headers: { Authorization: `Bearer ${user.token}` } }
+      );
       setPosts(posts.map((p) => (p._id === post._id ? { ...p, desc } : p)));
       return true;
     } catch (err) {
-      console.log(err);
+      console.log(err.response);
     }
   };
 
@@ -43,11 +47,12 @@ const Home = () => {
     try {
       await axios.delete(`${url}/posts/${post._id}`, {
         data: { userId: user._id },
+        headers: { Authorization: `Bearer ${user.token}` },
       });
       setPosts(posts.filter((p) => p._id !== post._id));
       return true;
     } catch (err) {
-      console.log(err);
+      console.log(err.response);
     }
   };
 
@@ -67,7 +72,6 @@ const Home = () => {
         <LeftSideBar />
         <div className='content'>
           <div>
-            <h2 className='px-1'>Home</h2>
             <NewPost addPost={addPost} />
             <div className='px-1 my-2'>
               <h3>Timeline</h3>
