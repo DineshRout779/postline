@@ -24,6 +24,24 @@ const AuthReducer = (state, action) => {
         isFetching: false,
         error: false,
       };
+    case 'UPDATE_PROFILE':
+      return {
+        user: {
+          ...state.user,
+          username: action.payload.username,
+          profilePic: action.payload.profilePic,
+          email: action.payload.email,
+          coverPic: action.payload.coverPic,
+        },
+        isFetching: false,
+        error: false,
+      };
+    case 'DELETE_PROFILE':
+      return {
+        user: null,
+        isFetching: false,
+        error: false,
+      };
     case 'FOLLOW':
       return {
         ...state,

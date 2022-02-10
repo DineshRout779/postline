@@ -16,6 +16,15 @@ export const Logout = () => ({
   type: 'LOGOUT',
 });
 
+export const UpdateUser = (userData) => ({
+  type: 'UPDATE_PROFILE',
+  payload: userData,
+});
+
+export const DeleteUser = () => ({
+  type: 'DELETE_PROFILE',
+});
+
 export const FollowUser = (userId) => ({
   type: 'FOLLOW',
   payload: userId,
