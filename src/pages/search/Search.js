@@ -15,9 +15,7 @@ function Search() {
   const [search, setSearch] = useState('');
   const [result, setResult] = useState([]);
 
-  // debounce function to minimize frequent function calls
   const searchUser = async (search) => {
-    console.log(search);
     try {
       const res = await axios.get(`${url}/users?username=${search}`);
       setResult(res.data);
@@ -30,6 +28,7 @@ function Search() {
     setSearch(e.target.value);
   };
 
+  // debounce function to minimize frequent function calls
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const debouncedSearch = useCallback(debounce(searchUser, 500), [search]);
 
