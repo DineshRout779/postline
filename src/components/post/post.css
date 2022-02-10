@@ -6,19 +6,16 @@
   color: var(--white);
   text-decoration: none;
   border-radius: 4px;
-  display: flex;
   position: relative;
-}
-
-.post:hover {
-  background-color: var(--dark-light-bg);
 }
 
 .post a {
   color: var(--white);
   text-decoration: none;
 }
-
+.post .desc {
+  margin: 1em 0;
+}
 .post a:hover {
   text-decoration: underline;
 }
@@ -33,6 +30,15 @@
 
 .post .avatar {
   margin-top: 0.4em;
+}
+
+.post-img {
+  display: block;
+  border-radius: 4px;
+  overflow: hidden;
+  margin: 0.5em 0;
+  object-fit: cover;
+  /* max-width: 360px; */
 }
 
 .post .option {

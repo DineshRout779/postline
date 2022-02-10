@@ -8,9 +8,18 @@ textarea {
   font-size: 16px;
   padding: 1em 0;
   color: var(--white);
-  resize: none;
+  resize: vertical;
+}
+
+input[type='file'] {
+  display: none;
+  width: 100%;
 }
 
 textarea:focus {
   border-bottom: 1px solid var(--dark-light-bg);
+}
+
+.form-control.textarea {
+  max-width: 100%;
 }
