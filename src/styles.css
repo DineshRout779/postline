@@ -274,17 +274,6 @@ small {
   border-bottom: 1px solid var(--dark-light-bg);
 }
 
-/* media queries */
-@media only screen and (max-width: 768px) {
-  .leftbar,
-  .rightbar {
-    display: none;
-  }
-  .content {
-    width: 100%;
-  }
-}
-
 /* button */
 .btn {
   font-size: 1em;
@@ -295,12 +284,18 @@ small {
   border: none;
   cursor: pointer;
   text-transform: uppercase;
+  text-align: center;
   letter-spacing: 2px;
   color: var(--dark-bg);
   border: 1px solid var(--white);
 }
 
+.btn-group {
+  margin: 1em 0;
+}
+
 .btn-tab {
+  width: 30%;
   padding: 1em;
   flex-grow: 1;
   background-color: var(--dark-bg);
@@ -325,6 +320,10 @@ small {
 
 .btn + .btn {
   margin-left: 1em;
+}
+
+.btn-tab + .btn-tab {
+  margin-left: 0;
 }
 
 .btn-link {
@@ -358,4 +357,15 @@ small {
   background-color: var(--success);
   color: var(--white);
   border: 1px solid var(--success);
+}
+
+/* media queries */
+@media only screen and (max-width: 768px) {
+  .leftbar,
+  .rightbar {
+    display: none;
+  }
+  .content {
+    width: 100%;
+  }
 }

@@ -1,8 +1,8 @@
 .leftbar {
   width: 20%;
-  min-height: 100vh;
   padding: 1em;
-  border-right: 1px solid var(--dark-light-bg);
+  height: 100vh;
+  /* border-right: 1px solid var(--dark-light-bg); */
 }
 
 .leftbar a {
