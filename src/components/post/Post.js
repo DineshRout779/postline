@@ -7,31 +7,20 @@ import axios from 'axios';
 import { BsThreeDots } from 'react-icons/bs';
 import { Link } from 'react-router-dom';
 
+const url = process.env.REACT_APP_API_URL;
+
 const Post = ({ post, onUpdate, onDelete }) => {
   const { user } = useContext(AuthContext);
   const [description, setDescription] = useState(post.desc);
   const [likes, setLikes] = useState(post.likes.length);
   const [isLiked, setIsLiked] = useState(false);
-  const [postedBy, setPostedBy] = useState(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const ref = useRef();
 
   // check if posts belongs to the user logged in or not
-  const isOwnPosts = post.userId === user._id;
-  const url = process.env.REACT_APP_API_URL;
-
-  useEffect(() => {
-    const fetchUserOfPost = async () => {
-      const res = await axios.get(`${url}/users/${post.userId}`);
-      setPostedBy(res.data.username);
-    };
-    fetchUserOfPost();
-    return () => {
-      setPostedBy(null);
-    };
-  }, [post.userId, url]);
+  const isOwnPosts = post.userId._id === user._id;
 
   useEffect(() => {
     setIsLiked(post.likes.includes(user._id));
@@ -91,69 +80,83 @@ const Post = ({ post, onUpdate, onDelete }) => {
 
   return (
     <div className='post'>
-      <Avatar s='50' />
-      <div className='flex-grow-1'>
-        <div className='flex justify-between align-center'>
-          <Link to={`/profile/${post.userId}`}>
-            <h4>{postedBy}</h4>
-          </Link>
-          {isOwnPosts && (
-            <button className='post-icon-btn option' onClick={handleToggleMenu}>
-              <BsThreeDots />
-            </button>
-          )}
-        </div>
-        <p>
-          {isEditing ? (
-            <textarea
-              name='desc'
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-            ></textarea>
-          ) : (
-            description
-          )}
-        </p>
-        <small className='text-gray'>
-          {new Date(post.createdAt).toDateString()}
-        </small>
-        <div className='flex'>
-          <p>{likes}</p>
-          <button className='post-icon-btn' onClick={handleToggleLike}>
-            {isLiked ? <IoMdHeart color={'#e94747'} /> : <IoMdHeartEmpty />}
-          </button>
-        </div>
-        {isMenuOpen && isOwnPosts && (
-          <div className='menu' ref={ref}>
-            <button onClick={handleToggleUpdate}>Update</button>
-            <button onClick={handleToggleDelete}>Delete</button>
+      <>
+        <div className='flex-grow-1'>
+          <div className='flex align-center'>
+            <Avatar
+              s='50'
+              profilePic={
+                post.userId.profilePic ? post.userId.profilePic : null
+              }
+            />
+            <Link to={`/profile/${post.userId._id}`}>
+              <h4>{post.userId.username}</h4>
+            </Link>
+            {isOwnPosts && (
+              <button
+                className='post-icon-btn option ml-auto'
+                onClick={handleToggleMenu}
+              >
+                <BsThreeDots />
+              </button>
+            )}
           </div>
-        )}
-        {isEditing ? (
-          <>
-            <button className='btn' onClick={handleToggleUpdate}>
-              cancel
+          <p className='desc'>
+            {isEditing ? (
+              <textarea
+                name='desc'
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                className={'form-control textarea'}
+              ></textarea>
+            ) : (
+              description
+            )}
+          </p>
+          <div className={'post-img'}>
+            {post.img ? <img src={post.img} alt='post' /> : null}
+          </div>
+          <small className='text-gray text-uppercase'>
+            {new Date(post.createdAt).toDateString()}
+          </small>
+          <div className='flex'>
+            <p>{likes}</p>
+            <button className='post-icon-btn' onClick={handleToggleLike}>
+              {isLiked ? <IoMdHeart color={'#e94747'} /> : <IoMdHeartEmpty />}
             </button>
-            <button className='btn btn-success' onClick={handleUpdate}>
-              save
-            </button>
-          </>
-        ) : (
-          ''
-        )}
-        {isDeleting ? (
-          <>
-            <button className='btn' onClick={handleToggleDelete}>
-              cancel
-            </button>
-            <button className='btn btn-danger' onClick={handleDelete}>
-              delete
-            </button>
-          </>
-        ) : (
-          ''
-        )}
-      </div>
+          </div>
+          {isMenuOpen && isOwnPosts && (
+            <div className='menu' ref={ref}>
+              <button onClick={handleToggleUpdate}>Update</button>
+              <button onClick={handleToggleDelete}>Delete</button>
+            </div>
+          )}
+          {isEditing ? (
+            <div className='btn-group'>
+              <button className='btn' onClick={handleToggleUpdate}>
+                cancel
+              </button>
+              <button className='btn btn-success' onClick={handleUpdate}>
+                save
+              </button>
+            </div>
+          ) : (
+            ''
+          )}
+          {isDeleting ? (
+            <div className='btn-group'>
+              <button className='btn' onClick={handleToggleDelete}>
+                cancel
+              </button>
+              <button className='btn btn-danger' onClick={handleDelete}>
+                delete
+              </button>
+            </div>
+          ) : (
+            ''
+          )}
+        </div>
+      </>
     </div>
   );
 };
