@@ -3,11 +3,13 @@ import Avatar from '../../components/avatar/Avatar';
 import { useContext, useEffect, useState } from 'react';
 import Spinner from '../../components/spinner/Spinner';
 import axios from 'axios';
-import Posts from '../../components/posts/Posts';
 import { useParams } from 'react-router';
 import LeftSideBar from '../../components/leftsidebar/LeftSideBar';
 import Navbar from '../../components/navbar/Navbar';
 import { AuthContext } from '../../context/AuthContext';
+import FileUpload from '../../components/fileupload/FileUpload';
+import { IoMdImages } from 'react-icons/io';
+import TabContainer from '../../components/tabcontainer/TabContainer';
 
 const url = process.env.REACT_APP_API_URL;
 
@@ -43,6 +45,7 @@ const Intro = ({
 }) => {
   const [userData, setUserData] = useState({
     coverText: user.coverPic ? user.coverPic : `Hello, I'm ${user.username}`,
+    profilePic: user.profilePic,
     username: user.username,
     email: user.email,
     password: '',
@@ -61,37 +64,49 @@ const Intro = ({
         await axios.put(`${url}/users/${user._id}/unfollow/`, {
           userId: currentUser._id,
         });
-        dispatch({ type: 'UNFOLLOW', payload: user._id });
+
+        dispatch({ type: 'UNFOLLOW', payload: user });
         onToggle();
       } else {
         await axios.put(`${url}/users/${user._id}/follow/`, {
           userId: currentUser._id,
         });
-        dispatch({ type: 'FOLLOW', payload: user._id });
+
+        dispatch({ type: 'FOLLOW', payload: user });
         onToggle();
       }
     } catch (err) {
-      console.log(err);
+      console.log(err.response);
     }
   };
 
   const updateUser = async () => {
     try {
-      await axios.put(
+      const res = await axios.put(
         `${url}/users/${user._id}`,
         {
           userId: user._id,
           coverPic: userData.coverText,
           username: userData.username,
           email: userData.email,
+          profilePic: userData.profilePic,
         },
         { headers: { Authorization: `Bearer ${currentUser.token}` } }
       );
+      dispatch({ type: 'UPDATE_PROFILE', payload: res.data });
       onToggle();
     } catch (error) {
-      console.log(error.response);
+      console.log(error);
     }
   };
+
+  useEffect(() => {
+    if (!isFollowing) {
+      user.followers.length = user.followers.length + 1;
+    } else {
+      user.followers.length = user.followers.length - 1;
+    }
+  }, [user.followers, isFollowing]);
 
   return (
     <div>
@@ -105,7 +120,11 @@ const Intro = ({
         <Cover coverText={userData.coverText} />
       )}
       <div className='flex justify-between align-center px-1 avatar-wapper'>
-        <Avatar />
+        <Avatar
+          isEditing={isEditing}
+          profilePic={userData.profilePic}
+          handleChange={handleChange}
+        />
         <div style={{ alignSelf: 'end' }}>
           {isOwnProfile ? (
             <>
@@ -173,6 +192,17 @@ const Intro = ({
                 placeholder={'Enter new password'}
               />
             </div>
+            <div className='form-group'>
+              <label htmlFor='file' className='label-icon flex align-center'>
+                <FileUpload
+                  img={userData.profilePic}
+                  onDone={({ base64 }) =>
+                    setUserData({ ...userData, profilePic: base64 })
+                  }
+                />
+                <IoMdImages /> Upload
+              </label>
+            </div>
           </>
         ) : (
           <>
@@ -226,13 +256,10 @@ const Profile = () => {
 
   const deletePost = async (post) => {
     try {
-      await axios.delete(
-        `${url}/posts/${post._id}`,
-        {
-          data: { userId: currentUser._id },
-        },
-        { headers: { Authorization: `Bearer ${currentUser.token}` } }
-      );
+      await axios.delete(`${url}/posts/${post._id}`, {
+        data: { userId: currentUser._id },
+        headers: { Authorization: `Bearer ${currentUser.token}` },
+      });
       setPosts(posts.filter((p) => p._id !== post._id));
       return true;
     } catch (err) {
@@ -251,8 +278,11 @@ const Profile = () => {
       const res = await Promise.all([fetchUser(id), fetchPosts(id)]);
       setUser(res[0].data);
       setIsOwnProfile(res[0].data._id === currentUser._id);
-      setIsFollowing(res[0].data.followers.includes(currentUser._id));
-      setPosts(res[1].data.filter((post) => post.userId === id));
+      setPosts(res[1].data.filter((post) => post.userId._id === id));
+      setIsFollowing(
+        res[0].data.followers.some((u) => u._id === currentUser._id)
+      );
+
       setIsLoaded(true);
     };
     fetchData(id);
@@ -271,6 +301,8 @@ const Profile = () => {
     setIsFollowing(!isFollowing);
   };
 
+  // console.log(posts);
+
   return (
     <>
       <Navbar />
@@ -287,18 +319,19 @@ const Profile = () => {
                 {isOwnProfile ? (
                   <>
                     {isEditing ? (
-                      <div>
+                      <>
                         <Intro
                           user={user}
                           currentUser={currentUser}
                           isOwnProfile={isOwnProfile}
                           isFollowing={isFollowing}
                           isEditing={isEditing}
+                          dispatch={dispatch}
                           onToggle={handleToggleEdit}
                         />
-                      </div>
+                      </>
                     ) : (
-                      <div>
+                      <>
                         <Intro
                           user={user}
                           isOwnProfile={isOwnProfile}
@@ -307,35 +340,33 @@ const Profile = () => {
                           onToggle={handleToggleEdit}
                         />
                         <div className='p-1'>
-                          <h3>All posts</h3>
-                          <Posts
+                          <TabContainer
+                            user={user}
                             posts={posts}
                             onUpdate={updatePost}
                             onDelete={deletePost}
                           />
                         </div>
-                      </div>
+                      </>
                     )}
                   </>
                 ) : (
                   <>
-                    <div>
-                      <Intro
+                    <Intro
+                      user={user}
+                      currentUser={currentUser}
+                      isOwnProfile={isOwnProfile}
+                      dispatch={dispatch}
+                      isFollowing={isFollowing}
+                      onToggle={handleToggleFollow}
+                    />
+                    <div className='p-1'>
+                      <TabContainer
                         user={user}
-                        currentUser={currentUser}
-                        isOwnProfile={isOwnProfile}
-                        dispatch={dispatch}
-                        isFollowing={isFollowing}
-                        onToggle={handleToggleFollow}
+                        posts={posts}
+                        onUpdate={updatePost}
+                        onDelete={deletePost}
                       />
-                      <div className='p-1'>
-                        <h3>All posts</h3>
-                        <Posts
-                          posts={posts}
-                          onUpdate={updatePost}
-                          onDelete={deletePost}
-                        />
-                      </div>
                     </div>
                   </>
                 )}
