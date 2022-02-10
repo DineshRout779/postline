@@ -1,4 +1,4 @@
-import { Link, NavLink } from 'react-router-dom';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
 import {
   MdHome,
   MdLogout,
@@ -12,11 +12,13 @@ import { AuthContext } from '../../context/AuthContext';
 
 const Navbar = () => {
   const { user, dispatch } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   const handleClick = () => {
     dispatch({ type: 'LOGOUT' });
     localStorage.removeItem('user');
-    window.location.replace = '/login';
+    localStorage.clear();
+    navigate('/login');
   };
 
   return (
