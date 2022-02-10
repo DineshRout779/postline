@@ -25,7 +25,7 @@ const RightSideBar = ({ user, max }) => {
       const res = await Promise.all([fetchAllPeople(), fetchAllFollowing()]);
       setList(
         res[0].data.filter((p) => {
-          if (p._id !== user._id && !user.following.includes(p._id)) return p;
+          if (p._id !== user._id && !p.followers.includes(user._id)) return p;
         })
       );
       setFollowingList(res[1].data);
@@ -33,20 +33,6 @@ const RightSideBar = ({ user, max }) => {
     };
     fetchData();
   }, [url, user]);
-
-  // const followUser = async (id) => {
-  //   try {
-  //     await axios.put(`${url}/users/${id}/follow/`, { userId: user._id });
-  //     setList(
-  //       list.filter((u) => {
-  //         if (u._id !== id && !u.followers.includes(user._id)) return u;
-  //       })
-  //     );
-  //     dispatch({ type: 'FOLLOW', payload: user._id });
-  //   } catch (err) {
-  //     console.log(err);
-  //   }
-  // };
 
   return (
     <div className='rightbar'>
