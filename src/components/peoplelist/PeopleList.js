@@ -6,7 +6,7 @@ const PeopleList = ({ list, max, message, title }) => {
   return (
     <div>
       <h3>{title ? title : ''}</h3>
-      <ul>
+      <ul className='people-list'>
         {list.length > 0 ? (
           list.slice(0, max ? max : list.length).map((p) => {
             return (
