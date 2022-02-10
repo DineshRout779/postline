@@ -1,13 +1,15 @@
 import './avatar.css';
 
-const Avatar = ({ s }) => {
+const Avatar = ({ s, profilePic }) => {
   return (
-    <img
-      src='/assets/images/avatar.jpg'
-      className='avatar'
-      style={{ maxWidth: `${s ? s : '80'}px` }}
-      alt={'avatar'}
-    />
+    <>
+      <img
+        src={profilePic ? profilePic : '/assets/images/avatar.jpg'}
+        className='avatar'
+        style={{ maxWidth: `${s ? s : '80'}px` }}
+        alt={'avatar'}
+      />
+    </>
   );
 };
 
