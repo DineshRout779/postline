@@ -48,13 +48,10 @@ const App = () => {
             </PrivateRoute>
           }
         />
-        <Route
-          path='login'
-          element={user ? <Navigate to={'/'} /> : <Login />}
-        />
+        <Route path='login' element={user ? <Navigate to='/' /> : <Login />} />
         <Route
           path='register'
-          element={user ? <Navigate to={'/'} /> : <Register />}
+          element={user ? <Navigate to='/' /> : <Register />}
         />
         <Route path='*' element={<NotFound />} />
       </Routes>
