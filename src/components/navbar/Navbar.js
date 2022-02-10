@@ -26,7 +26,7 @@ const Navbar = () => {
         <header>
           <nav className='container nav flex justify-between align-center'>
             <Link to={'/'} className='logo'>
-              Social
+              Postline
             </Link>
             <div className='nav-links flex justify-between align-center'>
               {user && (
