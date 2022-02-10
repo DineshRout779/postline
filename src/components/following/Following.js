@@ -10,7 +10,7 @@ const Following = ({ user, list }) => {
             return (
               <li className='flex justify-between align-center' key={p._id}>
                 <div className='flex align-center'>
-                  <Avatar s='50' />
+                  <Avatar s='50' profilePic={p.profilePic} />
                   <Link to={`/profile/${p._id}`}>
                     <h4>{p.username}</h4>
                   </Link>
