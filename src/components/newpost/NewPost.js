@@ -8,7 +8,7 @@ import { IoMdImages } from 'react-icons/io';
 const NewPost = ({ addPost }) => {
   const { user } = useContext(AuthContext);
   const [post, setPost] = useState({
-    userId: user._id,
+    postedBy: user._id,
     desc: '',
     img: '',
   });
@@ -22,7 +22,7 @@ const NewPost = ({ addPost }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    setPost({ userId: user._id, desc: '', img: '' });
+    setPost({ postedBy: user._id, desc: '', img: '' });
     addPost(post);
   };
 
