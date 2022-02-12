@@ -20,7 +20,7 @@ const Post = ({ post, onUpdate, onDelete }) => {
   const ref = useRef();
 
   // check if posts belongs to the user logged in or not
-  const isOwnPosts = post.userId._id === user._id;
+  const isOwnPosts = post.postedBy._id === user._id;
 
   useEffect(() => {
     setIsLiked(post.likes.includes(user._id));
@@ -85,12 +85,12 @@ const Post = ({ post, onUpdate, onDelete }) => {
           <div className='flex align-center'>
             <Avatar
               s='50'
-              profilePic={
-                post.userId.profilePic ? post.userId.profilePic : null
-              }
+              // profilePic={
+              //   post.postedBy.profilePic ? post.userId.profilePic : null
+              // }
             />
-            <Link to={`/profile/${post.userId._id}`}>
-              <h4>{post.userId.username}</h4>
+            <Link to={`/profile/${post.postedBy._id}`}>
+              <h4>{post.postedBy.username}</h4>
             </Link>
             {isOwnPosts && (
               <button

@@ -7,7 +7,7 @@ import Spinner from '../spinner/Spinner';
 import './rightsidebar.css';
 
 const RightSideBar = ({ user, max }) => {
-  const [list, setList] = useState([]);
+  const [findPeoplelist, setFindPeopleList] = useState([]);
   const [followingList, setFollowingList] = useState([]);
   const [isLoaded, setIsLoaded] = useState(false);
   // const [followStatus, setFollowStatus] = useState(false);
@@ -16,19 +16,19 @@ const RightSideBar = ({ user, max }) => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const fetchAllPeople = async () => {
-        return await axios.get(`${url}/users/`);
+      const findPeople = async () => {
+        return await axios.get(`${url}/users/findpeople/${user._id}`, {
+          headers: { Authorization: `Bearer ${user.token}` },
+        });
       };
       const fetchAllFollowing = async () => {
-        return await axios.get(`${url}/users/${user._id}/following`);
+        return await axios.get(`${url}/users/${user._id}`, {
+          headers: { Authorization: `Bearer ${user.token}` },
+        });
       };
-      const res = await Promise.all([fetchAllPeople(), fetchAllFollowing()]);
-      setList(
-        res[0].data.filter((p) => {
-          if (p._id !== user._id && !p.followers.includes(user._id)) return p;
-        })
-      );
-      setFollowingList(res[1].data);
+      const res = await Promise.all([findPeople(), fetchAllFollowing()]);
+      setFindPeopleList(res[0].data);
+      setFollowingList(res[1].data.following);
       setIsLoaded(true);
     };
     fetchData();
@@ -39,7 +39,7 @@ const RightSideBar = ({ user, max }) => {
       {isLoaded ? (
         <>
           <h2>People you may know</h2>
-          <PeopleList user={user} max={max} list={list} />
+          <PeopleList user={user} max={max} list={findPeoplelist} />
           <h2>Following</h2>
           <Following user={user} list={followingList} />
         </>

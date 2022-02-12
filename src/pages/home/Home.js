@@ -15,11 +15,11 @@ const Home = () => {
   const [posts, setPosts] = useState([]);
   const [isLoaded, setIsLoaded] = useState(false);
 
-  const { user } = useContext(AuthContext);
+  const { user: currentUser } = useContext(AuthContext);
 
   const addPost = async (post) => {
     try {
-      const res = await axios.post(`${url}/posts/`, post);
+      const res = await axios.post(`${url}/posts/${currentUser._id}`, post);
       setPosts([...posts, res.data]);
     } catch (err) {
       console.log(err.response);
@@ -29,12 +29,11 @@ const Home = () => {
   const updatePost = async (post, desc) => {
     try {
       await axios.put(
-        `${url}/posts/${post._id}`,
+        `${url}/posts/${post._id}/${currentUser._id}`,
         {
-          userId: user._id,
           desc,
         },
-        { headers: { Authorization: `Bearer ${user.token}` } }
+        { headers: { Authorization: `Bearer ${currentUser.token}` } }
       );
       setPosts(posts.map((p) => (p._id === post._id ? { ...p, desc } : p)));
       return true;
@@ -45,10 +44,13 @@ const Home = () => {
 
   const deletePost = async (post) => {
     try {
-      await axios.delete(`${url}/posts/${post._id}`, {
-        data: { userId: user._id },
-        headers: { Authorization: `Bearer ${user.token}` },
-      });
+      await axios.delete(
+        `${url}/posts/${post._id}/${currentUser._id}`,
+        {
+          headers: { Authorization: `Bearer ${currentUser.token}` },
+        },
+        { data: { postedBy: currentUser._id } }
+      );
       setPosts(posts.filter((p) => p._id !== post._id));
       return true;
     } catch (err) {
@@ -58,12 +60,12 @@ const Home = () => {
 
   useEffect(() => {
     const fetchPosts = async () => {
-      const res = await axios.get(`${url}/posts/timeline/${user._id}`);
+      const res = await axios.get(`${url}/posts/feed/${currentUser._id}`);
       setPosts(res.data);
       setIsLoaded(true);
     };
     fetchPosts();
-  }, [user._id]);
+  }, [currentUser._id]);
 
   return (
     <>
@@ -89,7 +91,7 @@ const Home = () => {
             </div>
           </div>
         </div>
-        <RightSideBar user={user} max='5' />
+        <RightSideBar user={currentUser} max='5' />
       </div>
     </>
   );

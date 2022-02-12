@@ -269,29 +269,26 @@ const Profile = () => {
 
   useEffect(() => {
     const fetchData = async (id) => {
-      const fetchPosts = async (userId) => {
-        return await axios.get(`${url}/posts/`);
+      const fetchPosts = async () => {
+        return await axios.get(`${url}/posts/myposts/${id}`);
       };
-      const fetchUser = async (id) => {
-        return await axios.get(`${url}/users/${id}`);
+      const fetchUser = async () => {
+        return await axios.get(`${url}/users/${id}`, {
+          headers: { Authorization: `Bearer ${currentUser.token}` },
+        });
       };
-      const res = await Promise.all([fetchUser(id), fetchPosts(id)]);
-      setUser(res[0].data);
-      setIsOwnProfile(res[0].data._id === currentUser._id);
-      setPosts(res[1].data.filter((post) => post.userId._id === id));
+      const [user, posts] = await Promise.all([fetchUser(), fetchPosts()]);
+      setUser(user.data);
+      setIsOwnProfile(user.data._id === currentUser._id);
+      setPosts(posts.data);
       setIsFollowing(
-        res[0].data.followers.some((u) => u._id === currentUser._id)
+        user.data.followers.some((u) => u._id === currentUser._id)
       );
 
       setIsLoaded(true);
     };
     fetchData(id);
-    return () => {
-      setUser(null);
-      setPosts([]);
-      setIsLoaded(false);
-    };
-  }, [id, currentUser._id]);
+  }, [id, currentUser._id, currentUser.token]);
 
   const handleToggleEdit = () => {
     setIsediting(!isEditing);
@@ -300,8 +297,6 @@ const Profile = () => {
   const handleToggleFollow = () => {
     setIsFollowing(!isFollowing);
   };
-
-  // console.log(posts);
 
   return (
     <>
