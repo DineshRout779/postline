@@ -51,6 +51,8 @@ const Intro = ({
     password: '',
   });
 
+  // console.log(user);
+
   const handleChange = (e) => {
     setUserData({
       ...userData,
@@ -58,23 +60,31 @@ const Intro = ({
     });
   };
 
-  const followUser = async () => {
+  const followUser = async (followId) => {
     try {
-      if (isFollowing) {
-        await axios.put(`${url}/users/${user._id}/unfollow/`, {
-          userId: currentUser._id,
-        });
+      const res = await axios.put(
+        `${url}/users/follow/${user._id}`,
+        {
+          followId,
+        },
+        { headers: { Authorization: `Bearer ${currentUser.token}` } }
+      );
+      console.log(res.data);
+    } catch (err) {
+      console.log(err.response);
+    }
+  };
 
-        dispatch({ type: 'UNFOLLOW', payload: user });
-        onToggle();
-      } else {
-        await axios.put(`${url}/users/${user._id}/follow/`, {
-          userId: currentUser._id,
-        });
-
-        dispatch({ type: 'FOLLOW', payload: user });
-        onToggle();
-      }
+  const unFollowUser = async (unfollowId) => {
+    try {
+      const res = await axios.put(
+        `${url}/users/unfollow/${user._id}`,
+        {
+          unfollowId,
+        },
+        { headers: { Authorization: `Bearer ${currentUser.token}` } }
+      );
+      console.log(res.data);
     } catch (err) {
       console.log(err.response);
     }
@@ -100,13 +110,13 @@ const Intro = ({
     }
   };
 
-  useEffect(() => {
-    if (!isFollowing) {
-      user.followers.length = user.followers.length + 1;
-    } else {
-      user.followers.length = user.followers.length - 1;
-    }
-  }, [user.followers, isFollowing]);
+  // useEffect(() => {
+  //   if (isFollowing && !isOwnProfile) {
+  //     user.followers.length = user.followers.length + 1;
+  //   } else {
+  //     user.followers.length = user.followers.length - 1;
+  //   }
+  // }, [user.followers, isFollowing, isOwnProfile]);
 
   return (
     <div>
@@ -146,7 +156,14 @@ const Intro = ({
               )}
             </>
           ) : (
-            <button className='btn' onClick={followUser}>
+            <button
+              className='btn'
+              onClick={
+                !isFollowing
+                  ? () => followUser(user._id)
+                  : () => unFollowUser(user._id)
+              }
+            >
               {isFollowing ? 'Unfollow' : 'Follow'}
               {/* <Spinner s='16' /> */}
             </button>
@@ -240,9 +257,8 @@ const Profile = () => {
   const updatePost = async (post, desc) => {
     try {
       await axios.put(
-        `${url}/posts/${post._id}`,
+        `${url}/posts/${post._id}/${currentUser._id}`,
         {
-          userId: currentUser._id,
           desc,
         },
         { headers: { Authorization: `Bearer ${currentUser.token}` } }
@@ -250,20 +266,23 @@ const Profile = () => {
       setPosts(posts.map((p) => (p._id === post._id ? { ...p, desc } : p)));
       return true;
     } catch (err) {
-      console.log(err);
+      console.log(err.response);
     }
   };
 
   const deletePost = async (post) => {
     try {
-      await axios.delete(`${url}/posts/${post._id}`, {
-        data: { userId: currentUser._id },
-        headers: { Authorization: `Bearer ${currentUser.token}` },
-      });
+      await axios.delete(
+        `${url}/posts/${post._id}/${currentUser._id}`,
+        {
+          headers: { Authorization: `Bearer ${currentUser.token}` },
+        },
+        { data: { postedBy: currentUser._id } }
+      );
       setPosts(posts.filter((p) => p._id !== post._id));
       return true;
     } catch (err) {
-      console.log(err);
+      console.log(err.response);
     }
   };
 
@@ -281,9 +300,11 @@ const Profile = () => {
       setUser(user.data);
       setIsOwnProfile(user.data._id === currentUser._id);
       setPosts(posts.data);
-      setIsFollowing(
-        user.data.followers.some((u) => u._id === currentUser._id)
-      );
+
+      !(user.data._id === currentUser._id) &&
+        setIsFollowing(
+          user.data.followers.some((u) => u._id === currentUser._id)
+        );
 
       setIsLoaded(true);
     };
