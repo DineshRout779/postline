@@ -36,7 +36,7 @@ const LeftSideBar = () => {
         ''
       )}
       <NavLink
-        to={'/people'}
+        to={'/findpeople'}
         className={({ isActive }) => (isActive ? 'active' : '')}
       >
         <MdPeopleOutline className='icon' /> People
