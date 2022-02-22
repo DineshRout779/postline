@@ -1,18 +1,17 @@
-/* eslint-disable array-callback-return */
 import axios from 'axios';
 import { useEffect, useState } from 'react';
-import Following from '../following/Following';
 import PeopleList from '../peoplelist/PeopleList';
 import Spinner from '../spinner/Spinner';
 import './rightsidebar.css';
 
+const url = process.env.REACT_APP_API_URL;
+
 const RightSideBar = ({ user, max }) => {
   const [findPeoplelist, setFindPeopleList] = useState([]);
   const [followingList, setFollowingList] = useState([]);
+  const [followersList, setFollowersList] = useState([]);
   const [isLoaded, setIsLoaded] = useState(false);
   // const [followStatus, setFollowStatus] = useState(false);
-
-  const url = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -21,27 +20,45 @@ const RightSideBar = ({ user, max }) => {
           headers: { Authorization: `Bearer ${user.token}` },
         });
       };
-      const fetchAllFollowing = async () => {
+      const fetchUser = async () => {
         return await axios.get(`${url}/users/${user._id}`, {
           headers: { Authorization: `Bearer ${user.token}` },
         });
       };
-      const res = await Promise.all([findPeople(), fetchAllFollowing()]);
+      const res = await Promise.all([findPeople(), fetchUser()]);
       setFindPeopleList(res[0].data);
       setFollowingList(res[1].data.following);
+      setFollowersList(res[1].data.followers);
       setIsLoaded(true);
     };
     fetchData();
-  }, [url, user]);
+  }, [user]);
 
   return (
     <div className='rightbar'>
       {isLoaded ? (
         <>
-          <h2>People you may know</h2>
-          <PeopleList user={user} max={max} list={findPeoplelist} />
+          <h2>People you may follow</h2>
+          <PeopleList
+            user={user}
+            max={max}
+            list={findPeoplelist}
+            title='people'
+          />
           <h2>Following</h2>
-          <Following user={user} list={followingList} />
+          <PeopleList
+            user={user}
+            max={max}
+            list={followingList}
+            title='following'
+          />
+          <h2>Followers</h2>
+          <PeopleList
+            user={user}
+            max={max}
+            list={followersList}
+            title='following'
+          />
         </>
       ) : (
         <div className='full-height flex justify-center align-center'>
