@@ -8,6 +8,7 @@ import RightSideBar from '../../components/rightsidebar/RightSideBar';
 import Navbar from '../../components/navbar/Navbar';
 import { AuthContext } from '../../context/AuthContext';
 import './home.css';
+import { createPost } from '../../api/post-api';
 
 const url = process.env.REACT_APP_API_URL;
 
@@ -19,13 +20,14 @@ const Home = () => {
 
   const addPost = async (post) => {
     try {
-      const res = await axios.post(`${url}/posts/${currentUser._id}`, post);
-      setPosts([...posts, res.data]);
-    } catch (err) {
-      console.log(err.response);
+      const newPost = await createPost(post, currentUser);
+      setPosts([...posts, newPost]);
+    } catch (error) {
+      console.log(error.response);
     }
   };
 
+  // post - id, currentUser -  id & token ,
   const updatePost = async (post, desc) => {
     try {
       await axios.put(
@@ -42,6 +44,7 @@ const Home = () => {
     }
   };
 
+  // post - id, currentUser -  id & token ,
   const deletePost = async (post) => {
     try {
       await axios.delete(
@@ -60,6 +63,7 @@ const Home = () => {
 
   useEffect(() => {
     const fetchPosts = async () => {
+      // currentUser - id
       const res = await axios.get(`${url}/posts/feed/${currentUser._id}`);
       setPosts(res.data);
       setIsLoaded(true);
