@@ -22,8 +22,12 @@ const NewPost = ({ addPost }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    setPost({ postedBy: user._id, desc: '', img: '' });
-    addPost(post);
+    if (post.desc !== '' || post.img !== '') {
+      setPost({ postedBy: user._id, desc: '', img: '' });
+      addPost(post);
+    } else {
+      console.log('please input');
+    }
   };
 
   return (
