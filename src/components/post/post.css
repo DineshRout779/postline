@@ -13,9 +13,11 @@
   color: var(--white);
   text-decoration: none;
 }
+
 .post .desc {
-  margin: 1em 0;
+  margin: 0.5em 0;
 }
+
 .post a:hover {
   text-decoration: underline;
 }

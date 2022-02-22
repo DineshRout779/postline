@@ -1,7 +1,7 @@
 :root {
-  --dark-bg: #1c181d;
+  --dark-bg: #1b1919;
   --dark-light-bg: #302931;
-  --light-blue: #5c2a9d;
+  --light-blue: #405dfd;
   --white: #eeeeee;
   --accent: #e94747;
   --success: #166e2c;
@@ -29,6 +29,7 @@ a {
 
 p {
   word-wrap: break-word;
+  margin: 0.5em 0;
 }
 
 h1,
@@ -118,6 +119,10 @@ img {
 
 .full-height {
   min-height: 100vh;
+}
+
+.half-height {
+  min-height: 50vh;
 }
 
 .height-50 {
@@ -241,7 +246,7 @@ small {
   transition: 0.2s border ease-in;
 }
 
-.form-control:focus {
+.form-control:focus:not(.btn) {
   border-color: var(--white);
 }
 
@@ -272,6 +277,10 @@ small {
 
 .tab-container {
   border-bottom: 1px solid var(--dark-light-bg);
+  position: sticky;
+  top: 70px;
+  z-index: 100;
+  background-color: var(--dark-bg);
 }
 
 /* button */
@@ -290,13 +299,17 @@ small {
   border: 1px solid var(--white);
 }
 
+.btn:hover:not(.btn-tab) {
+  opacity: 0.9;
+}
+
 .btn-group {
   margin: 1em 0;
 }
 
 .btn-tab {
   width: 30%;
-  padding: 1em;
+  padding: 1em 0;
   flex-grow: 1;
   background-color: var(--dark-bg);
   color: var(--white);
@@ -306,6 +319,7 @@ small {
 
 .btn-tab-active {
   position: relative;
+  color: var(--accent);
 }
 
 .btn-tab-active::before {
@@ -367,5 +381,11 @@ small {
   }
   .content {
     width: 100%;
+  }
+}
+
+@media only screen and (max-width: 320px) {
+  .btn-tab {
+    font-size: 0.9em;
   }
 }

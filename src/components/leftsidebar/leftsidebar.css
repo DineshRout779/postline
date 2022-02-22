@@ -1,8 +1,10 @@
 .leftbar {
   width: 20%;
   padding: 1em;
-  height: 100vh;
+  min-height: 100vh;
   border-right: 1px solid var(--dark-light-bg);
+  position: sticky;
+  top: 100px;
 }
 
 .leftbar a {
