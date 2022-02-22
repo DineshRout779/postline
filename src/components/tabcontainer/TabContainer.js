@@ -7,7 +7,7 @@ const tabs = ['Posts', 'Following', 'Followers'];
 const Tab = ({ tabName, isActive, index, onTabChange }) => {
   return (
     <button
-      className={isActive ? 'btn btn-tab btn-tab-active' : 'btn btn-tab border'}
+      className={isActive ? 'btn btn-tab btn-tab-active' : 'btn btn-tab '}
       onClick={() => onTabChange(index)}
     >
       {tabName}
@@ -47,7 +47,7 @@ const TabContainer = (props) => {
           />
         ))}
       </div>
-      <div className='full-height'>
+      <div className='half-height'>
         <Content index={activeIndex} {...props} />
       </div>
     </>
