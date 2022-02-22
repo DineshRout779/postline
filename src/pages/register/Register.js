@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { Link } from 'react-router-dom';
 import Navbar from '../../components/navbar/Navbar';
@@ -16,7 +16,11 @@ function Register() {
   });
   const [msg, setMsg] = useState('');
   const navigate = useNavigate();
-  const { isFetching } = useContext(AuthContext);
+  const { user, isFetching } = useContext(AuthContext);
+
+  useEffect(() => {
+    user && navigate('/', { replace: true });
+  }, [navigate, user]);
 
   const handleChange = (e) => {
     setFormData({
@@ -88,7 +92,7 @@ function Register() {
             >
               {isFetching ? (
                 <div className='flex justify-center align-center'>
-                  <Spinner s={'18'} color='white' />
+                  <Spinner s={'18'} color='white' border='transparent' />
                 </div>
               ) : (
                 'Register'

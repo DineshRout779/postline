@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
 import Spinner from '../../components/spinner/Spinner';
@@ -14,7 +14,11 @@ const Login = () => {
   });
   const [msg, setMsg] = useState('');
   const navigate = useNavigate();
-  const { isFetching, dispatch } = useContext(AuthContext);
+  const { user, isFetching, dispatch } = useContext(AuthContext);
+
+  useEffect(() => {
+    user && navigate('/', { replace: true });
+  }, [navigate, user]);
 
   const handleChange = (e) => {
     setFormData({
@@ -82,7 +86,7 @@ const Login = () => {
             >
               {isFetching ? (
                 <div className='flex justify-center align-center'>
-                  <Spinner s={'18'} color='white' />
+                  <Spinner s={'18'} color='white' border='transparent' />
                 </div>
               ) : (
                 'Login'

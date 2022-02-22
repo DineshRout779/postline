@@ -7,11 +7,10 @@ import Register from './pages/register/Register';
 import { AuthContextProvider } from './context/AuthContext';
 import { AuthContext } from './context/AuthContext';
 import { useContext } from 'react';
-import People from './pages/people/People';
 import NotFound from './pages/notfound/NotFound';
+import FindPeople from './pages/findpeople/FindPeople';
 
 const App = () => {
-  const { user } = useContext(AuthContext);
   return (
     <AuthContextProvider>
       <Routes>
@@ -19,49 +18,46 @@ const App = () => {
           index
           path='/'
           element={
-            <PrivateRoute>
+            <PrivateRoute redirectTo='/login'>
               <Home />
             </PrivateRoute>
           }
         />
         <Route
-          path='people'
+          path='/findpeople'
           element={
-            <PrivateRoute>
-              <People />
+            <PrivateRoute redirectTo='/login'>
+              <FindPeople />
             </PrivateRoute>
           }
         />
         <Route
-          path='profile/:id'
+          path='/profile/:id'
           element={
-            <PrivateRoute>
+            <PrivateRoute redirectTo='/login'>
               <Profile />
             </PrivateRoute>
           }
         />
         <Route
-          path='search'
+          path='/search'
           element={
-            <PrivateRoute>
+            <PrivateRoute redirectTo='/login'>
               <Search />
             </PrivateRoute>
           }
         />
-        <Route path='login' element={user ? <Navigate to='/' /> : <Login />} />
-        <Route
-          path='register'
-          element={user ? <Navigate to='/' /> : <Register />}
-        />
+        <Route path='/login' element={<Login />} />
+        <Route path='/register' element={<Register />} />
         <Route path='*' element={<NotFound />} />
       </Routes>
     </AuthContextProvider>
   );
 };
 
-const PrivateRoute = ({ children }) => {
+const PrivateRoute = ({ children, redirectTo }) => {
   const { user } = useContext(AuthContext);
-  return user ? children : <Navigate to='/login' />;
+  return user ? children : <Navigate to={redirectTo} />;
 };
 
 export default App;
