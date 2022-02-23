@@ -20,10 +20,10 @@ const Home = () => {
 
   const addPost = async (post) => {
     try {
-      const newPost = await createPost(post, currentUser);
-      setPosts([...posts, newPost]);
+      const { data } = await createPost(post, currentUser);
+      setPosts([...posts, data]);
     } catch (error) {
-      console.log(error.response);
+      console.log(error);
     }
   };
 
