@@ -85,9 +85,9 @@ const Post = ({ post, onUpdate, onDelete }) => {
           <div className='flex align-center'>
             <Avatar
               s='50'
-              // profilePic={
-              //   post.postedBy.profilePic ? post.userId.profilePic : null
-              // }
+              profilePic={
+                post.postedBy.profilePic ? post.postedBy.profilePic : null
+              }
             />
             <Link to={`/profile/${post.postedBy._id}`}>
               <h4>{post.postedBy.username}</h4>
