@@ -8,10 +8,7 @@ const url = process.env.REACT_APP_API_URL;
 
 const RightSideBar = ({ user, max }) => {
   const [findPeoplelist, setFindPeopleList] = useState([]);
-  const [followingList, setFollowingList] = useState([]);
-  const [followersList, setFollowersList] = useState([]);
   const [isLoaded, setIsLoaded] = useState(false);
-  // const [followStatus, setFollowStatus] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -27,12 +24,43 @@ const RightSideBar = ({ user, max }) => {
       };
       const res = await Promise.all([findPeople(), fetchUser()]);
       setFindPeopleList(res[0].data);
-      setFollowingList(res[1].data.following);
-      setFollowersList(res[1].data.followers);
       setIsLoaded(true);
     };
     fetchData();
   }, [user]);
+
+  // follow/unfollow working
+  const followUser = async (followId) => {
+    try {
+      console.log('following...');
+      const res = await axios.put(
+        `${url}/users/follow/${user._id}`,
+        {
+          followId,
+        },
+        { headers: { Authorization: `Bearer ${user.token}` } }
+      );
+      console.log(res.data);
+    } catch (err) {
+      console.log(err.response);
+    }
+  };
+
+  const unFollowUser = async (unfollowId) => {
+    try {
+      console.log('unfollowing...');
+      const res = await axios.put(
+        `${url}/users/unfollow/${user._id}`,
+        {
+          unfollowId,
+        },
+        { headers: { Authorization: `Bearer ${user.token}` } }
+      );
+      console.log(res.data);
+    } catch (err) {
+      console.log(err.response);
+    }
+  };
 
   return (
     <div className='rightbar'>
@@ -44,20 +72,8 @@ const RightSideBar = ({ user, max }) => {
             max={max}
             list={findPeoplelist}
             title='people'
-          />
-          <h2>Following</h2>
-          <PeopleList
-            user={user}
-            max={max}
-            list={followingList}
-            title='following'
-          />
-          <h2>Followers</h2>
-          <PeopleList
-            user={user}
-            max={max}
-            list={followersList}
-            title='following'
+            onFollow={followUser}
+            onUnFollow={unFollowUser}
           />
         </>
       ) : (
