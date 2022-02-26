@@ -3,9 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
 import Spinner from '../../components/spinner/Spinner';
 import Navbar from '../../components/navbar/Navbar';
-import axios from 'axios';
-
-const url = process.env.REACT_APP_API_URL;
+import { login } from '../../api/auth-api';
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -31,13 +29,13 @@ const Login = () => {
     e.preventDefault();
     setMsg('');
     dispatch({ type: 'LOGIN_START' });
-    try {
-      const res = await axios.post(`${url}/auth/login/`, formData);
-      dispatch({ type: 'LOGIN_SUCCESS', payload: res.data.user });
+    const { data } = await login(formData);
+    if (data && data.error) {
+      dispatch({ type: 'LOGIN_FAILURE', payload: data.error });
+      setMsg(data.error);
+    } else {
+      dispatch({ type: 'LOGIN_SUCCESS', payload: data.user });
       navigate('/', { replace: true });
-    } catch (error) {
-      dispatch({ type: 'LOGIN_FAILURE', payload: error.response.error });
-      setMsg(error.response.data.error);
     }
   };
 

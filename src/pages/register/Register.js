@@ -1,12 +1,10 @@
-import axios from 'axios';
 import { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { Link } from 'react-router-dom';
+import { register } from '../../api/auth-api';
 import Navbar from '../../components/navbar/Navbar';
 import Spinner from '../../components/spinner/Spinner';
 import { AuthContext } from '../../context/AuthContext';
-
-const url = process.env.REACT_APP_API_URL;
 
 function Register() {
   const [formData, setFormData] = useState({
@@ -32,13 +30,11 @@ function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMsg('');
-
-    try {
-      await axios.post(`${url}/auth/register/`, formData);
+    const { data } = await register(formData);
+    if (data && data.error) {
+      setMsg(data.error);
+    } else {
       navigate('/login');
-    } catch (error) {
-      console.log(error.response);
-      setMsg(error.response.data.error);
     }
   };
 
@@ -68,7 +64,7 @@ function Register() {
               name='email'
               id='email'
               className='form-control'
-              placeholder='Enter Email'
+              placeholder='Enter Email ( use dummy email)'
               value={formData.email}
               onChange={handleChange}
             />
