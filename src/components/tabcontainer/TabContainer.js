@@ -1,6 +1,9 @@
+import axios from 'axios';
 import { useState } from 'react';
 import PeopleList from '../peoplelist/PeopleList';
 import Posts from '../posts/Posts';
+
+const url = process.env.REACT_APP_API_URL;
 
 const tabs = ['Posts', 'Following', 'Followers'];
 
@@ -15,14 +18,63 @@ const Tab = ({ tabName, isActive, index, onTabChange }) => {
   );
 };
 
-const Content = ({ index, posts, onUpdate, onDelete, user }) => {
+const Content = ({
+  index,
+  posts,
+  onUpdate,
+  onDelete,
+  user,
+  currentUser,
+  followersList,
+  followingList,
+}) => {
+  const followUser = async (followId) => {
+    try {
+      await axios.put(
+        `${url}/users/follow/${currentUser._id}`,
+        {
+          followId,
+        },
+        { headers: { Authorization: `Bearer ${currentUser.token}` } }
+      );
+    } catch (err) {
+      console.log(err.response);
+    }
+  };
+
+  const unFollowUser = async (unfollowId) => {
+    try {
+      await axios.put(
+        `${url}/users/unfollow/${currentUser._id}`,
+        {
+          unfollowId,
+        },
+        { headers: { Authorization: `Bearer ${currentUser.token}` } }
+      );
+    } catch (err) {
+      console.log(err.response);
+    }
+  };
+
   switch (index) {
     case 0:
       return <Posts posts={posts} onUpdate={onUpdate} onDelete={onDelete} />;
     case 1:
-      return <PeopleList list={user.following} />;
+      return (
+        <PeopleList
+          list={followingList}
+          onFollow={followUser}
+          onUnFollow={unFollowUser}
+        />
+      );
     case 2:
-      return <PeopleList list={user.followers} />;
+      return (
+        <PeopleList
+          list={followersList}
+          onFollow={followUser}
+          onUnFollow={unFollowUser}
+        />
+      );
     default:
       return <Posts posts={posts} onUpdate={onUpdate} onDelete={onDelete} />;
   }
