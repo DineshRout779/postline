@@ -1,5 +1,4 @@
 /* eslint-disable array-callback-return */
-import axios from 'axios';
 import { useContext, useEffect, useState } from 'react';
 import { findPeople, followUser, unFollowUser } from '../../api/user-api';
 import LeftSideBar from '../../components/leftsidebar/LeftSideBar';
