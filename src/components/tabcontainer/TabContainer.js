@@ -21,7 +21,6 @@ const Content = ({
   posts,
   onUpdate,
   onDelete,
-  user,
   currentUser,
   followersList,
   followingList,
