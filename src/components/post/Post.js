@@ -28,33 +28,17 @@ const Post = ({ post, onUpdate, onDelete }) => {
 
   const handleToggleLike = () => {
     try {
-      axios.put(`${url}/posts/${post._id}/like`, {
-        userId: user._id,
-      });
+      axios.put(`${url}/posts/${post._id}/like/${user._id}`);
+      setLikes(isLiked ? likes - 1 : likes + 1);
+      setIsLiked(!isLiked);
     } catch (err) {
       console.log(err);
     }
-    setLikes(isLiked ? likes - 1 : likes + 1);
-    setIsLiked(!isLiked);
   };
 
   const handleToggleMenu = (e) => {
     setIsMenuOpen(!isMenuOpen);
   };
-
-  useEffect(() => {
-    const checkIfClickedOutside = (e) => {
-      if (isMenuOpen && ref.current && !ref.current.contains(e.target)) {
-        setIsMenuOpen(false);
-      }
-    };
-
-    document.addEventListener('click', checkIfClickedOutside);
-
-    return () => {
-      document.removeEventListener('click', checkIfClickedOutside);
-    };
-  }, [isMenuOpen]);
 
   const handleToggleUpdate = () => {
     if (isDeleting) setIsDeleting(false);
@@ -77,6 +61,20 @@ const Post = ({ post, onUpdate, onDelete }) => {
     let isDeleted = await onDelete(post);
     if (isDeleted) setIsDeleting(false);
   };
+
+  useEffect(() => {
+    const checkIfClickedOutside = (e) => {
+      if (isMenuOpen && ref.current && !ref.current.contains(e.target)) {
+        setIsMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('click', checkIfClickedOutside);
+
+    return () => {
+      document.removeEventListener('click', checkIfClickedOutside);
+    };
+  }, [isMenuOpen]);
 
   return (
     <div className='post'>
@@ -117,7 +115,9 @@ const Post = ({ post, onUpdate, onDelete }) => {
             {post.img ? <img src={post.img} alt='post' /> : null}
           </div>
           <small className='text-gray text-uppercase'>
-            {new Date(post.createdAt).toDateString()}
+            {new Date(post.createdAt).toDateString() +
+              ' | ' +
+              new Date(post.createdAt).toLocaleTimeString()}
           </small>
           <div className='flex'>
             <p>{likes}</p>
