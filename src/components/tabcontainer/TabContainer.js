@@ -1,9 +1,7 @@
-import axios from 'axios';
 import { useState } from 'react';
+import { followUser, unFollowUser } from '../../api/user-api';
 import PeopleList from '../peoplelist/PeopleList';
 import Posts from '../posts/Posts';
-
-const url = process.env.REACT_APP_API_URL;
 
 const tabs = ['Posts', 'Following', 'Followers'];
 
@@ -28,29 +26,17 @@ const Content = ({
   followersList,
   followingList,
 }) => {
-  const followUser = async (followId) => {
+  const follow = async (followId) => {
     try {
-      await axios.put(
-        `${url}/users/follow/${currentUser._id}`,
-        {
-          followId,
-        },
-        { headers: { Authorization: `Bearer ${currentUser.token}` } }
-      );
+      await followUser(currentUser._id, followId, currentUser.token);
     } catch (err) {
       console.log(err.response);
     }
   };
 
-  const unFollowUser = async (unfollowId) => {
+  const unFollow = async (unfollowId) => {
     try {
-      await axios.put(
-        `${url}/users/unfollow/${currentUser._id}`,
-        {
-          unfollowId,
-        },
-        { headers: { Authorization: `Bearer ${currentUser.token}` } }
-      );
+      await unFollowUser(currentUser._id, unfollowId, currentUser.token);
     } catch (err) {
       console.log(err.response);
     }
@@ -63,16 +49,16 @@ const Content = ({
       return (
         <PeopleList
           list={followingList}
-          onFollow={followUser}
-          onUnFollow={unFollowUser}
+          onFollow={follow}
+          onUnFollow={unFollow}
         />
       );
     case 2:
       return (
         <PeopleList
           list={followersList}
-          onFollow={followUser}
-          onUnFollow={unFollowUser}
+          onFollow={follow}
+          onUnFollow={unFollow}
         />
       );
     default:

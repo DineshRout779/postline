@@ -10,6 +10,7 @@ import { AuthContext } from '../../context/AuthContext';
 import FileUpload from '../../components/fileupload/FileUpload';
 import { IoMdImages } from 'react-icons/io';
 import TabContainer from '../../components/tabcontainer/TabContainer';
+import { followUser, unFollowUser, updateUser } from '../../api/user-api';
 
 const url = process.env.REACT_APP_API_URL;
 
@@ -59,14 +60,12 @@ const Intro = ({
     });
   };
 
-  const followUser = async (followId) => {
+  const follow = async (followId) => {
     try {
-      const res = await axios.put(
-        `${url}/users/follow/${currentUser._id}`,
-        {
-          followId,
-        },
-        { headers: { Authorization: `Bearer ${currentUser.token}` } }
+      const res = await followUser(
+        currentUser._id,
+        followId,
+        currentUser.token
       );
       res.data && onToggle();
     } catch (err) {
@@ -74,14 +73,12 @@ const Intro = ({
     }
   };
 
-  const unFollowUser = async (unfollowId) => {
+  const unFollow = async (unfollowId) => {
     try {
-      const res = await axios.put(
-        `${url}/users/unfollow/${currentUser._id}`,
-        {
-          unfollowId,
-        },
-        { headers: { Authorization: `Bearer ${currentUser.token}` } }
+      const res = await unFollowUser(
+        currentUser._id,
+        unfollowId,
+        currentUser.token
       );
       res.data && onToggle();
     } catch (err) {
@@ -89,26 +86,19 @@ const Intro = ({
     }
   };
 
-  const updateUser = async () => {
+  const update = async () => {
     try {
-      await axios.put(
-        `${url}/users/${user._id}`,
-        {
-          userId: user._id,
-          coverPic: userData.coverText,
-          username: userData.username,
-          email: userData.email,
-          profilePic: userData.profilePic,
-        },
-        { headers: { Authorization: `Bearer ${currentUser.token}` } }
+      const res = await updateUser(
+        user._id,
+        userData,
+        currentUser.token,
+        onToggle
       );
-      onToggle();
+      res.data && onToggle();
     } catch (error) {
       console.log(error);
     }
   };
-
-  // console.log(user);
 
   return (
     <div>
@@ -135,7 +125,7 @@ const Intro = ({
                   <button className='btn' onClick={onToggle}>
                     cancel
                   </button>
-                  <button className='btn btn-success' onClick={updateUser}>
+                  <button className='btn btn-success' onClick={update}>
                     save
                   </button>
                 </>
@@ -151,9 +141,7 @@ const Intro = ({
             <button
               className='btn'
               onClick={
-                !isFollowing
-                  ? () => followUser(user._id)
-                  : () => unFollowUser(user._id)
+                !isFollowing ? () => follow(user._id) : () => unFollow(user._id)
               }
             >
               {isFollowing ? 'Following' : 'Follow'}
