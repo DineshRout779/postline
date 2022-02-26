@@ -2,7 +2,6 @@ import './profile.css';
 import Avatar from '../../components/avatar/Avatar';
 import { useContext, useEffect, useState } from 'react';
 import Spinner from '../../components/spinner/Spinner';
-import axios from 'axios';
 import { useParams } from 'react-router';
 import LeftSideBar from '../../components/leftsidebar/LeftSideBar';
 import Navbar from '../../components/navbar/Navbar';
@@ -10,9 +9,13 @@ import { AuthContext } from '../../context/AuthContext';
 import FileUpload from '../../components/fileupload/FileUpload';
 import { IoMdImages } from 'react-icons/io';
 import TabContainer from '../../components/tabcontainer/TabContainer';
-import { followUser, unFollowUser, updateUser } from '../../api/user-api';
-
-const url = process.env.REACT_APP_API_URL;
+import {
+  followUser,
+  getUser,
+  unFollowUser,
+  updateUser,
+} from '../../api/user-api';
+import { deletePost, getMyPosts, updatePost } from '../../api/post-api';
 
 const Cover = ({ coverText, isEditing = false, onUpdate = (f) => f }) => {
   return (
@@ -68,6 +71,10 @@ const Intro = ({
         currentUser.token
       );
       res.data && onToggle();
+      setUserData({
+        ...userData,
+        followers: res.data.followers,
+      });
     } catch (err) {
       console.log(err.response);
     }
@@ -81,6 +88,10 @@ const Intro = ({
         currentUser.token
       );
       res.data && onToggle();
+      setUserData({
+        ...userData,
+        followers: res.data.followers,
+      });
     } catch (err) {
       console.log(err.response);
     }
@@ -235,15 +246,9 @@ const Profile = () => {
 
   const { user: currentUser, dispatch } = useContext(AuthContext);
 
-  const updatePost = async (post, desc) => {
+  const handleUpdatePost = async (post, desc) => {
     try {
-      await axios.put(
-        `${url}/posts/${post._id}/${currentUser._id}`,
-        {
-          desc,
-        },
-        { headers: { Authorization: `Bearer ${currentUser.token}` } }
-      );
+      await updatePost(post._id, currentUser._id, currentUser.token);
       setPosts(posts.map((p) => (p._id === post._id ? { ...p, desc } : p)));
       return true;
     } catch (err) {
@@ -251,15 +256,9 @@ const Profile = () => {
     }
   };
 
-  const deletePost = async (post) => {
+  const handleDeletePost = async (post) => {
     try {
-      await axios.delete(
-        `${url}/posts/${post._id}/${currentUser._id}`,
-        {
-          headers: { Authorization: `Bearer ${currentUser.token}` },
-        },
-        { data: { postedBy: currentUser._id } }
-      );
+      await deletePost(post._id, currentUser._id, currentUser.token);
       setPosts(posts.filter((p) => p._id !== post._id));
       return true;
     } catch (err) {
@@ -278,12 +277,10 @@ const Profile = () => {
   useEffect(() => {
     const fetchData = async (id) => {
       const fetchPosts = async () => {
-        return await axios.get(`${url}/posts/myposts/${id}`);
+        return await getMyPosts(id);
       };
       const fetchUser = async () => {
-        return await axios.get(`${url}/users/${id}`, {
-          headers: { Authorization: `Bearer ${currentUser.token}` },
-        });
+        return await getUser(id, currentUser.token);
       };
       const [user, posts] = await Promise.all([fetchUser(), fetchPosts()]);
       setUser(user.data);
@@ -332,10 +329,6 @@ const Profile = () => {
                         <Intro
                           user={user}
                           isOwnProfile={isOwnProfile}
-                          followersList={followersList}
-                          followingList={followingList}
-                          followingCount={user.following.length}
-                          followersCount={user.followers.length}
                           isFollowing={isFollowing}
                           isEditing={isEditing}
                           onToggle={handleToggleEdit}
@@ -347,8 +340,8 @@ const Profile = () => {
                             followersList={followersList}
                             followingList={followingList}
                             posts={posts}
-                            onUpdate={updatePost}
-                            onDelete={deletePost}
+                            onUpdate={handleUpdatePost}
+                            onDelete={handleDeletePost}
                           />
                         </div>
                       </>
@@ -360,10 +353,6 @@ const Profile = () => {
                       user={user}
                       currentUser={currentUser}
                       isOwnProfile={isOwnProfile}
-                      followingCount={user.following.length}
-                      followersCount={user.followers.length}
-                      followersList={followersList}
-                      followingList={followingList}
                       dispatch={dispatch}
                       isFollowing={isFollowing}
                       onToggle={handleToggleFollow}
@@ -375,8 +364,6 @@ const Profile = () => {
                         followersList={followersList}
                         followingList={followingList}
                         posts={posts}
-                        onUpdate={updatePost}
-                        onDelete={deletePost}
                       />
                     </div>
                   </>
