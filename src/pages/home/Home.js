@@ -1,16 +1,18 @@
 import { useContext, useEffect, useState } from 'react';
 import NewPost from '../../components/newpost/NewPost';
 import Posts from '../../components/posts/Posts';
-import axios from 'axios';
 import Spinner from '../../components/spinner/Spinner';
 import LeftSideBar from '../../components/leftsidebar/LeftSideBar';
 import RightSideBar from '../../components/rightsidebar/RightSideBar';
 import Navbar from '../../components/navbar/Navbar';
 import { AuthContext } from '../../context/AuthContext';
 import './home.css';
-import { createPost } from '../../api/post-api';
-
-const url = process.env.REACT_APP_API_URL;
+import {
+  createPost,
+  deletePost,
+  getTimelinePosts,
+  updatePost,
+} from '../../api/post-api';
 
 const Home = () => {
   const [posts, setPosts] = useState([]);
@@ -28,15 +30,9 @@ const Home = () => {
   };
 
   // post - id, currentUser -  id & token ,
-  const updatePost = async (post, desc) => {
+  const handleUpdatePost = async (post, desc) => {
     try {
-      await axios.put(
-        `${url}/posts/${post._id}/${currentUser._id}`,
-        {
-          desc,
-        },
-        { headers: { Authorization: `Bearer ${currentUser.token}` } }
-      );
+      await updatePost(post._id, currentUser._id, currentUser.token);
       setPosts(posts.map((p) => (p._id === post._id ? { ...p, desc } : p)));
       return true;
     } catch (err) {
@@ -45,15 +41,9 @@ const Home = () => {
   };
 
   // post - id, currentUser -  id & token ,
-  const deletePost = async (post) => {
+  const handleDeletePost = async (post) => {
     try {
-      await axios.delete(
-        `${url}/posts/${post._id}/${currentUser._id}`,
-        {
-          headers: { Authorization: `Bearer ${currentUser.token}` },
-        },
-        { data: { postedBy: currentUser._id } }
-      );
+      await deletePost(post._id, currentUser._id, currentUser.token);
       setPosts(posts.filter((p) => p._id !== post._id));
       return true;
     } catch (err) {
@@ -63,8 +53,7 @@ const Home = () => {
 
   useEffect(() => {
     const fetchPosts = async () => {
-      // currentUser - id
-      const res = await axios.get(`${url}/posts/feed/${currentUser._id}`);
+      const res = await getTimelinePosts(currentUser._id);
       setPosts(res.data);
       setIsLoaded(true);
     };
@@ -84,8 +73,8 @@ const Home = () => {
               {isLoaded ? (
                 <Posts
                   posts={posts}
-                  onUpdate={updatePost}
-                  onDelete={deletePost}
+                  onUpdate={handleUpdatePost}
+                  onDelete={handleDeletePost}
                 />
               ) : (
                 <div className='height-50'>
