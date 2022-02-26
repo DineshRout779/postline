@@ -11,6 +11,7 @@ const url = process.env.REACT_APP_API_URL;
 
 const NewPost = ({ addPost }) => {
   const [user, setUser] = useState(null);
+  const [errorMsg, setErrorMsg] = useState('');
   const [isLoaded, setIsLoaded] = useState(false);
   const { user: currentUser } = useContext(AuthContext);
   const [post, setPost] = useState({
@@ -20,6 +21,7 @@ const NewPost = ({ addPost }) => {
   });
 
   const handleChange = (e) => {
+    setErrorMsg('');
     setPost({
       ...post,
       [e.target.name]: e.target.value,
@@ -28,11 +30,12 @@ const NewPost = ({ addPost }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    setErrorMsg('');
     if (post.desc !== '' || post.img !== '') {
       setPost({ postedBy: user._id, desc: '', img: '' });
       addPost(post);
     } else {
-      console.log('please input');
+      setErrorMsg('Please input texts or image');
     }
   };
 
@@ -67,6 +70,7 @@ const NewPost = ({ addPost }) => {
               value={post.desc}
               className={'form-control textarea'}
             ></textarea>
+            {errorMsg}
             {post.img ? (
               <img
                 src={post.img}
