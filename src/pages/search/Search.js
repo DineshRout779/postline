@@ -7,17 +7,16 @@ import { useCallback, useContext, useEffect, useState } from 'react';
 import { AuthContext } from '../../context/AuthContext';
 import PeopleList from '../../components/peoplelist/PeopleList';
 import debounce from 'lodash.debounce';
-import axios from 'axios';
-const url = process.env.REACT_APP_API_URL;
+import { searchUser } from '../../api/user-api';
 
 function Search() {
   const { user } = useContext(AuthContext);
   const [search, setSearch] = useState('');
   const [result, setResult] = useState([]);
 
-  const searchUser = async (search) => {
+  const searchPeople = async (searchTerm) => {
     try {
-      const res = await axios.get(`${url}/users?username=${search}`);
+      const res = await searchUser(searchTerm);
       setResult(res.data);
     } catch (error) {
       console.log(error);
@@ -30,7 +29,7 @@ function Search() {
 
   // debounce function to minimize frequent function calls
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const debouncedSearch = useCallback(debounce(searchUser, 500), [search]);
+  const debouncedSearch = useCallback(debounce(searchPeople, 500), [search]);
 
   useEffect(() => {
     if (search.length > 0) debouncedSearch(search);
