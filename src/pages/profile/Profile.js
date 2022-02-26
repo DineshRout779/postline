@@ -39,7 +39,6 @@ const Intro = ({
   currentUser,
   isOwnProfile,
   isFollowing,
-  dispatch,
   isEditing = false,
   onToggle = (f) => f,
 }) => {
@@ -49,9 +48,9 @@ const Intro = ({
     username: user.username,
     email: user.email,
     password: '',
+    following: user.following,
+    followers: user.followers,
   });
-
-  // console.log(user);
 
   const handleChange = (e) => {
     setUserData({
@@ -63,13 +62,13 @@ const Intro = ({
   const followUser = async (followId) => {
     try {
       const res = await axios.put(
-        `${url}/users/follow/${user._id}`,
+        `${url}/users/follow/${currentUser._id}`,
         {
           followId,
         },
         { headers: { Authorization: `Bearer ${currentUser.token}` } }
       );
-      console.log(res.data);
+      res.data && onToggle();
     } catch (err) {
       console.log(err.response);
     }
@@ -78,13 +77,13 @@ const Intro = ({
   const unFollowUser = async (unfollowId) => {
     try {
       const res = await axios.put(
-        `${url}/users/unfollow/${user._id}`,
+        `${url}/users/unfollow/${currentUser._id}`,
         {
           unfollowId,
         },
         { headers: { Authorization: `Bearer ${currentUser.token}` } }
       );
-      console.log(res.data);
+      res.data && onToggle();
     } catch (err) {
       console.log(err.response);
     }
@@ -92,7 +91,7 @@ const Intro = ({
 
   const updateUser = async () => {
     try {
-      const res = await axios.put(
+      await axios.put(
         `${url}/users/${user._id}`,
         {
           userId: user._id,
@@ -103,20 +102,13 @@ const Intro = ({
         },
         { headers: { Authorization: `Bearer ${currentUser.token}` } }
       );
-      dispatch({ type: 'UPDATE_PROFILE', payload: res.data });
       onToggle();
     } catch (error) {
       console.log(error);
     }
   };
 
-  // useEffect(() => {
-  //   if (isFollowing && !isOwnProfile) {
-  //     user.followers.length = user.followers.length + 1;
-  //   } else {
-  //     user.followers.length = user.followers.length - 1;
-  //   }
-  // }, [user.followers, isFollowing, isOwnProfile]);
+  // console.log(user);
 
   return (
     <div>
@@ -164,8 +156,7 @@ const Intro = ({
                   : () => unFollowUser(user._id)
               }
             >
-              {isFollowing ? 'Unfollow' : 'Follow'}
-              {/* <Spinner s='16' /> */}
+              {isFollowing ? 'Following' : 'Follow'}
             </button>
           )}
         </div>
@@ -228,11 +219,11 @@ const Intro = ({
             <p>Joined {new Date(user.createdAt).toDateString()}</p>
             <div className='flex'>
               <p>
-                <span className='text-bold'>{user.following.length}</span>{' '}
+                <span className='text-bold'>{userData.following.length}</span>{' '}
                 Following
               </p>
               <p>
-                <span className='text-bold'> {user.followers.length}</span>{' '}
+                <span className='text-bold'> {userData.followers.length}</span>{' '}
                 Followers
               </p>
             </div>
@@ -251,6 +242,8 @@ const Profile = () => {
   const [isFollowing, setIsFollowing] = useState(false);
   const [isEditing, setIsediting] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [followingList, setFollowingList] = useState([]);
+  const [followersList, setFollowersList] = useState([]);
 
   const { user: currentUser, dispatch } = useContext(AuthContext);
 
@@ -286,6 +279,14 @@ const Profile = () => {
     }
   };
 
+  const handleToggleEdit = () => {
+    setIsediting(!isEditing);
+  };
+
+  const handleToggleFollow = () => {
+    setIsFollowing(!isFollowing);
+  };
+
   useEffect(() => {
     const fetchData = async (id) => {
       const fetchPosts = async () => {
@@ -300,24 +301,16 @@ const Profile = () => {
       setUser(user.data);
       setIsOwnProfile(user.data._id === currentUser._id);
       setPosts(posts.data);
-
       !(user.data._id === currentUser._id) &&
         setIsFollowing(
           user.data.followers.some((u) => u._id === currentUser._id)
         );
-
+      setFollowingList(user.data.following);
+      setFollowersList(user.data.followers);
       setIsLoaded(true);
     };
     fetchData(id);
   }, [id, currentUser._id, currentUser.token]);
-
-  const handleToggleEdit = () => {
-    setIsediting(!isEditing);
-  };
-
-  const handleToggleFollow = () => {
-    setIsFollowing(!isFollowing);
-  };
 
   return (
     <>
@@ -351,6 +344,10 @@ const Profile = () => {
                         <Intro
                           user={user}
                           isOwnProfile={isOwnProfile}
+                          followersList={followersList}
+                          followingList={followingList}
+                          followingCount={user.following.length}
+                          followersCount={user.followers.length}
                           isFollowing={isFollowing}
                           isEditing={isEditing}
                           onToggle={handleToggleEdit}
@@ -358,6 +355,9 @@ const Profile = () => {
                         <div className='p-1'>
                           <TabContainer
                             user={user}
+                            currentUser={currentUser}
+                            followersList={followersList}
+                            followingList={followingList}
                             posts={posts}
                             onUpdate={updatePost}
                             onDelete={deletePost}
@@ -372,6 +372,10 @@ const Profile = () => {
                       user={user}
                       currentUser={currentUser}
                       isOwnProfile={isOwnProfile}
+                      followingCount={user.following.length}
+                      followersCount={user.followers.length}
+                      followersList={followersList}
+                      followingList={followingList}
                       dispatch={dispatch}
                       isFollowing={isFollowing}
                       onToggle={handleToggleFollow}
@@ -379,6 +383,9 @@ const Profile = () => {
                     <div className='p-1'>
                       <TabContainer
                         user={user}
+                        currentUser={currentUser}
+                        followersList={followersList}
+                        followingList={followingList}
                         posts={posts}
                         onUpdate={updatePost}
                         onDelete={deletePost}

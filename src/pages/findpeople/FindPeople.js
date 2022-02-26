@@ -14,6 +14,34 @@ const FindPeople = () => {
   const [list, setList] = useState([]);
   const [isLoaded, setIsLoaded] = useState(false);
 
+  const followUser = async (followId) => {
+    try {
+      await axios.put(
+        `${url}/users/follow/${user._id}`,
+        {
+          followId,
+        },
+        { headers: { Authorization: `Bearer ${user.token}` } }
+      );
+    } catch (err) {
+      console.log(err.response);
+    }
+  };
+
+  const unFollowUser = async (unfollowId) => {
+    try {
+      await axios.put(
+        `${url}/users/unfollow/${user._id}`,
+        {
+          unfollowId,
+        },
+        { headers: { Authorization: `Bearer ${user.token}` } }
+      );
+    } catch (err) {
+      console.log(err.response);
+    }
+  };
+
   useEffect(() => {
     const fetchAllPeople = async () => {
       const res = await axios.get(`${url}/users/findpeople/${user._id}`, {
@@ -36,7 +64,12 @@ const FindPeople = () => {
               <>
                 <h2 className='px-1'>People you may follow</h2>
                 <div className='px-1 my-2'>
-                  <PeopleList user={user} list={list} />
+                  <PeopleList
+                    user={user}
+                    list={list}
+                    onFollow={followUser}
+                    onUnFollow={unFollowUser}
+                  />
                 </div>
               </>
             ) : (
