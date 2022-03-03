@@ -20,19 +20,18 @@ const Home = () => {
 
   const { user: currentUser } = useContext(AuthContext);
 
-  const addPost = async (post) => {
+  const onaddPost = async (post) => {
     try {
       const { data } = await createPost(post, currentUser);
       setPosts([...posts, data]);
     } catch (error) {
-      console.log(error);
+      console.log(error.response);
     }
   };
 
-  // post - id, currentUser -  id & token ,
-  const handleUpdatePost = async (post, desc) => {
+  const onUpdatePost = async (post, desc) => {
     try {
-      await updatePost(post._id, currentUser._id, currentUser.token);
+      await updatePost(post._id, currentUser._id, currentUser.token, desc);
       setPosts(posts.map((p) => (p._id === post._id ? { ...p, desc } : p)));
       return true;
     } catch (err) {
@@ -40,8 +39,7 @@ const Home = () => {
     }
   };
 
-  // post - id, currentUser -  id & token ,
-  const handleDeletePost = async (post) => {
+  const onDeletePost = async (post) => {
     try {
       await deletePost(post._id, currentUser._id, currentUser.token);
       setPosts(posts.filter((p) => p._id !== post._id));
@@ -67,14 +65,14 @@ const Home = () => {
         <LeftSideBar />
         <div className='content'>
           <div>
-            <NewPost addPost={addPost} />
+            <NewPost addPost={onaddPost} />
             <div className='px-1 my-2'>
               <h3>Timeline</h3>
               {isLoaded ? (
                 <Posts
                   posts={posts}
-                  onUpdate={handleUpdatePost}
-                  onDelete={handleDeletePost}
+                  onUpdate={onUpdatePost}
+                  onDelete={onDeletePost}
                 />
               ) : (
                 <div className='height-50'>
