@@ -30,11 +30,11 @@ function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMsg('');
-    const { data } = await register(formData);
-    if (data && data.error) {
-      setMsg(data.error);
-    } else {
+    try {
+      await register(formData);
       navigate('/login');
+    } catch (error) {
+      setMsg(error.response.data.error);
     }
   };
 

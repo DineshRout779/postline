@@ -29,18 +29,15 @@ const RightSideBar = ({ user, max }) => {
     fetchData();
   }, [user]);
 
-  // follow/unfollow working
   const followUser = async (followId) => {
     try {
-      console.log('following...');
-      const res = await axios.put(
+      await axios.put(
         `${url}/users/follow/${user._id}`,
         {
           followId,
         },
         { headers: { Authorization: `Bearer ${user.token}` } }
       );
-      console.log(res.data);
     } catch (err) {
       console.log(err.response);
     }
@@ -48,15 +45,13 @@ const RightSideBar = ({ user, max }) => {
 
   const unFollowUser = async (unfollowId) => {
     try {
-      console.log('unfollowing...');
-      const res = await axios.put(
+      await axios.put(
         `${url}/users/unfollow/${user._id}`,
         {
           unfollowId,
         },
         { headers: { Authorization: `Bearer ${user.token}` } }
       );
-      console.log(res.data);
     } catch (err) {
       console.log(err.response);
     }

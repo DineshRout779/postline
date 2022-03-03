@@ -29,13 +29,13 @@ const Login = () => {
     e.preventDefault();
     setMsg('');
     dispatch({ type: 'LOGIN_START' });
-    const { data } = await login(formData);
-    if (data && data.error) {
-      dispatch({ type: 'LOGIN_FAILURE', payload: data.error });
-      setMsg(data.error);
-    } else {
+    try {
+      const { data } = await login(formData);
       dispatch({ type: 'LOGIN_SUCCESS', payload: data.user });
       navigate('/', { replace: true });
+    } catch (error) {
+      dispatch({ type: 'LOGIN_FAILURE', payload: error.response.data.error });
+      setMsg(error.response.data.error);
     }
   };
 
