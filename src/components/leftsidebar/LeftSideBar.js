@@ -22,7 +22,10 @@ const LeftSideBar = () => {
 
   return (
     <div className='leftbar flex flex-column'>
-      <NavLink to='/' className={({ isActive }) => (isActive ? 'active' : '')}>
+      <NavLink
+        to='/home'
+        className={({ isActive }) => (isActive ? 'active' : '')}
+      >
         <MdHome className='icon' /> Home
       </NavLink>
       {user ? (

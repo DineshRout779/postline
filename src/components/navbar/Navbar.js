@@ -25,14 +25,14 @@ const Navbar = () => {
       {user && (
         <header>
           <nav className='container nav flex justify-between align-center'>
-            <Link to={'/'} className='logo'>
+            <Link to={'/home'} className='logo'>
               Postline
             </Link>
             <div className='nav-links flex justify-between align-center'>
               {user && (
                 <>
                   <NavLink
-                    to='/'
+                    to='/home'
                     className={({ isActive }) => (isActive ? 'active' : '')}
                   >
                     <MdHome className='icon' />

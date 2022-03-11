@@ -9,14 +9,15 @@ import { AuthContext } from './context/AuthContext';
 import { useContext } from 'react';
 import NotFound from './pages/notfound/NotFound';
 import FindPeople from './pages/findpeople/FindPeople';
+import Welcome from './pages/welcome/Welcome';
 
 const App = () => {
   return (
     <AuthContextProvider>
       <Routes>
+        <Route index path='/' element={<Welcome />} />
         <Route
-          index
-          path='/'
+          path='/home'
           element={
             <PrivateRoute redirectTo='/login'>
               <Home />

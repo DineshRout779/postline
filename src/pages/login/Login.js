@@ -15,7 +15,7 @@ const Login = () => {
   const { user, isFetching, dispatch } = useContext(AuthContext);
 
   useEffect(() => {
-    user && navigate('/', { replace: true });
+    user && navigate('/home', { replace: true });
   }, [navigate, user]);
 
   const handleChange = (e) => {
@@ -32,7 +32,7 @@ const Login = () => {
     try {
       const { data } = await login(formData);
       dispatch({ type: 'LOGIN_SUCCESS', payload: data.user });
-      navigate('/', { replace: true });
+      navigate('/home', { replace: true });
     } catch (error) {
       dispatch({ type: 'LOGIN_FAILURE', payload: error.response.data.error });
       setMsg(error.response.data.error);
