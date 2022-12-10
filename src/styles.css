@@ -3,9 +3,9 @@
   --dark-light-bg: #302931;
   --light-blue: #405dfd;
   --white: #eeeeee;
-  --accent: #e94747;
+  --accent: #ff5a5a;
   --success: #166e2c;
-  --danger: #ff5050;
+  --danger: #ff5a5a;
 }
 
 * {
@@ -373,9 +373,9 @@ small {
 }
 
 .btn-danger {
-  background-color: rgb(245, 47, 47);
+  background-color: var(--danger);
   color: var(--white);
-  border: 1px solid rgb(245, 47, 47);
+  border: 1px solid var(--danger);
   text-decoration: none;
 }
 
