@@ -1,6 +1,6 @@
 # Social
 
-A social media app made with MERN stack.
+A social media app made with MERN stack technologies.
 
 ## Screenshot
 
