@@ -1,11 +1,13 @@
 import './post.css';
 import { IoMdHeart, IoMdHeartEmpty } from 'react-icons/io';
+import { MdOutlineMessage } from 'react-icons/md';
 import Avatar from '../avatar/Avatar';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { AuthContext } from '../../context/AuthContext';
 import axios from 'axios';
 import { BsThreeDots } from 'react-icons/bs';
 import { Link } from 'react-router-dom';
+import PostActionModal from './PostActionModal';
 
 const url = process.env.REACT_APP_API_URL;
 
@@ -52,9 +54,13 @@ const Post = ({ post, onUpdate, onDelete }) => {
     setIsMenuOpen(false);
   };
 
-  const handleUpdate = async () => {
-    let isUpdated = await onUpdate(post, description);
-    if (isUpdated) setIsEditing(false);
+  const handleUpdate = async (desc) => {
+    let isUpdated = await onUpdate(post, desc);
+
+    if (isUpdated) {
+      setIsEditing(false);
+      setDescription(desc);
+    }
   };
 
   const handleDelete = async () => {
@@ -99,18 +105,8 @@ const Post = ({ post, onUpdate, onDelete }) => {
               </button>
             )}
           </div>
-          <p className='desc'>
-            {isEditing ? (
-              <textarea
-                name='desc'
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                className={'form-control textarea'}
-              ></textarea>
-            ) : (
-              description
-            )}
-          </p>
+
+          <p className='desc'>{description}</p>
           <div className={'post-img'}>
             {post.img ? <img src={post.img} alt='post' /> : null}
           </div>
@@ -119,11 +115,19 @@ const Post = ({ post, onUpdate, onDelete }) => {
               ' | ' +
               new Date(post.createdAt).toLocaleTimeString()}
           </small>
-          <div className='flex'>
-            <p>{likes}</p>
-            <button className='post-icon-btn' onClick={handleToggleLike}>
-              {isLiked ? <IoMdHeart color={'#e94747'} /> : <IoMdHeartEmpty />}
-            </button>
+          <div className='post-actions'>
+            <div className='flex'>
+              <p>{likes}</p>
+              <button className='post-icon-btn' onClick={handleToggleLike}>
+                {isLiked ? <IoMdHeart color={'#e94747'} /> : <IoMdHeartEmpty />}
+              </button>
+            </div>
+            <div className='flex'>
+              <p>{likes}</p>
+              <button className='post-icon-btn' onClick={handleToggleLike}>
+                <MdOutlineMessage />
+              </button>
+            </div>
           </div>
           {isMenuOpen && isOwnPosts && (
             <div className='menu' ref={ref}>
@@ -132,26 +136,40 @@ const Post = ({ post, onUpdate, onDelete }) => {
             </div>
           )}
           {isEditing ? (
-            <div className='btn-group'>
-              <button className='btn' onClick={handleToggleUpdate}>
-                cancel
-              </button>
-              <button className='btn btn-success' onClick={handleUpdate}>
-                save
-              </button>
-            </div>
+            // <div className='btn-group'>
+            //   <button className='btn' onClick={handleToggleUpdate}>
+            //     cancel
+            //   </button>
+            //   <button className='btn btn-success' onClick={handleUpdate}>
+            //     save
+            //   </button>
+            // </div>
+
+            <PostActionModal
+              action='UPDATE'
+              onCancel={handleToggleUpdate}
+              onConfirm={(desc) => handleUpdate(desc)}
+              post={post}
+            />
           ) : (
             ''
           )}
           {isDeleting ? (
-            <div className='btn-group'>
-              <button className='btn' onClick={handleToggleDelete}>
-                cancel
-              </button>
-              <button className='btn btn-danger' onClick={handleDelete}>
-                delete
-              </button>
-            </div>
+            // <div className='btn-group'>
+            //   <button className='btn' onClick={handleToggleDelete}>
+            //     cancel
+            //   </button>
+            //   <button className='btn btn-danger' onClick={handleDelete}>
+            //     delete
+            //   </button>
+            // </div>
+
+            <PostActionModal
+              action='DELETE'
+              onCancel={handleToggleDelete}
+              onConfirm={handleDelete}
+              post={post}
+            />
           ) : (
             ''
           )}
