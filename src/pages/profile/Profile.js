@@ -200,6 +200,9 @@ const Intro = ({
               />
             </div>
             <div className='form-group'>
+              <label style={{ margin: '8px 0' }}>
+                Upload new profile picture
+              </label>
               <label htmlFor='file' className='label-icon flex align-center'>
                 <FileUpload
                   img={userData.profilePic}
