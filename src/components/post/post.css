@@ -107,3 +107,59 @@ textarea {
   max-width: 480px;
   background-color: #222;
 }
+
+/* comment form */
+
+.comment {
+  border-top: 1px solid rgb(38, 36, 36);
+  display: flex;
+  padding-top: 1em;
+  gap: 1em;
+}
+
+.comment form {
+  flex: 1;
+}
+
+.comment .btn__comment {
+  font-size: 14px;
+}
+
+.comment-user {
+  margin-top: 4px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  aspect-ratio: 1;
+  object-fit: cover;
+}
+
+.comment-textarea {
+  min-height: 60px;
+  width: 100%;
+  margin-bottom: 14px;
+}
+
+/* comment */
+.comment-list {
+  border-top: 1px solid rgb(38, 36, 36);
+}
+
+.comment-item {
+  margin: 0.5em 0;
+  display: flex;
+  gap: 16px;
+}
+
+.comment-desc-header {
+  display: flex;
+  gap: 8px;
+}
+
+.comment-desc-header p {
+  margin: 0;
+}
+
+.comment-text {
+  color: rgb(190, 182, 182);
+}
