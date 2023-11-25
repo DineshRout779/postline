@@ -8,17 +8,24 @@ import axios from 'axios';
 import { BsThreeDots } from 'react-icons/bs';
 import { Link } from 'react-router-dom';
 import PostActionModal from './PostActionModal';
+import { getUser } from '../../api/user-api';
+import { addComment } from '../../api/post-api';
+import Comment from './Comment';
 
 const url = process.env.REACT_APP_API_URL;
 
 const Post = ({ post, onUpdate, onDelete }) => {
   const { user } = useContext(AuthContext);
+  const [currentUser, setCurrentUser] = useState(null);
   const [description, setDescription] = useState(post.desc);
+  const [comment, setComment] = useState('');
+  const [allComments, setAllComments] = useState(post.comments);
   const [likes, setLikes] = useState(post.likes.length);
   const [isLiked, setIsLiked] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [showComments, setShowComments] = useState(false);
   const ref = useRef();
 
   // check if posts belongs to the user logged in or not
@@ -28,9 +35,31 @@ const Post = ({ post, onUpdate, onDelete }) => {
     setIsLiked(post.likes.includes(user._id));
   }, [post.likes, user._id]);
 
+  const handleAddComment = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await addComment(post._id, user._id, user.token, comment);
+
+      // console.log(res);
+
+      if (res.status === 201) {
+        setAllComments(res.data.comments);
+        setComment('');
+      }
+    } catch (err) {
+      console.log(err.response);
+    }
+  };
+
   const handleToggleLike = () => {
     try {
-      axios.put(`${url}/posts/${post._id}/like/${user._id}`);
+      axios.put(
+        `${url}/posts/${post._id}/like/${user._id}`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${user.token}` },
+        }
+      );
       setLikes(isLiked ? likes - 1 : likes + 1);
       setIsLiked(!isLiked);
     } catch (err) {
@@ -82,6 +111,21 @@ const Post = ({ post, onUpdate, onDelete }) => {
     };
   }, [isMenuOpen]);
 
+  useEffect(() => {
+    (async () => {
+      try {
+        const res = await getUser(user._id, user.token);
+        // console.log(res);
+
+        if (res.status === 200) {
+          setCurrentUser(res.data);
+        }
+      } catch (err) {
+        console.log(err.response);
+      }
+    })();
+  }, [user._id, user.token]);
+
   return (
     <div className='post'>
       <>
@@ -123,11 +167,44 @@ const Post = ({ post, onUpdate, onDelete }) => {
               </button>
             </div>
             <div className='flex'>
-              <p>{likes}</p>
-              <button className='post-icon-btn' onClick={handleToggleLike}>
+              <p>{allComments.length}</p>
+              <button
+                onClick={() => setShowComments(!showComments)}
+                className='post-icon-btn'
+              >
                 <MdOutlineMessage />
               </button>
             </div>
+          </div>
+          {/* comment area */}
+          {/* comments */}
+          {showComments ? (
+            <div className='comment-list'>
+              {allComments.map((c) => (
+                <Comment c={c} key={c._id} />
+              ))}
+            </div>
+          ) : null}
+          {/* comment form */}
+          <div className='comment'>
+            <img
+              src={currentUser?.profilePic}
+              alt=''
+              className='comment-user'
+            />
+            <form onSubmit={handleAddComment} className='comment-form'>
+              <textarea
+                name='comment'
+                value={comment}
+                onChange={(e) => setComment(e.target.value)}
+                id='comment'
+                className='comment-textarea'
+                placeholder='Write something...'
+              ></textarea>
+              <button type='submit' className='btn btn__comment'>
+                Comment
+              </button>
+            </form>
           </div>
           {isMenuOpen && isOwnPosts && (
             <div className='menu' ref={ref}>
@@ -136,15 +213,6 @@ const Post = ({ post, onUpdate, onDelete }) => {
             </div>
           )}
           {isEditing ? (
-            // <div className='btn-group'>
-            //   <button className='btn' onClick={handleToggleUpdate}>
-            //     cancel
-            //   </button>
-            //   <button className='btn btn-success' onClick={handleUpdate}>
-            //     save
-            //   </button>
-            // </div>
-
             <PostActionModal
               action='UPDATE'
               onCancel={handleToggleUpdate}
@@ -155,15 +223,6 @@ const Post = ({ post, onUpdate, onDelete }) => {
             ''
           )}
           {isDeleting ? (
-            // <div className='btn-group'>
-            //   <button className='btn' onClick={handleToggleDelete}>
-            //     cancel
-            //   </button>
-            //   <button className='btn btn-danger' onClick={handleDelete}>
-            //     delete
-            //   </button>
-            // </div>
-
             <PostActionModal
               action='DELETE'
               onCancel={handleToggleDelete}

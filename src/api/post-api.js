@@ -34,4 +34,21 @@ const deletePost = async (postId, userId, token) => {
   );
 };
 
-export { getMyPosts, getTimelinePosts, createPost, updatePost, deletePost };
+const addComment = async (postId, userId, token, comment) => {
+  return await axios.put(
+    `${url}/posts/${postId}/comment/${userId}`,
+    { text: comment },
+    {
+      headers: { Authorization: `Bearer ${token}` },
+    }
+  );
+};
+
+export {
+  getMyPosts,
+  getTimelinePosts,
+  createPost,
+  updatePost,
+  deletePost,
+  addComment,
+};
