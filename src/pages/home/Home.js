@@ -50,12 +50,17 @@ const Home = () => {
   };
 
   useEffect(() => {
-    const fetchPosts = async () => {
-      const res = await getTimelinePosts(currentUser._id);
-      setPosts(res.data);
-      setIsLoaded(true);
+    const fetchTimelinePosts = async () => {
+      try {
+        const res = await getTimelinePosts(currentUser._id);
+        setPosts(res.data);
+      } catch (err) {
+        console.log(err.response);
+      } finally {
+        setIsLoaded(true);
+      }
     };
-    fetchPosts();
+    fetchTimelinePosts();
   }, [currentUser._id]);
 
   return (
