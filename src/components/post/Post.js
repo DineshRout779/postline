@@ -188,7 +188,7 @@ const Post = ({ post, onUpdate, onDelete }) => {
           {/* comment form */}
           <div className='comment'>
             <img
-              src={currentUser?.profilePic}
+              src={currentUser?.profilePic || '/assets/images/avatar.jpg'}
               alt=''
               className='comment-user'
             />

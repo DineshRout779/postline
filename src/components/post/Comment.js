@@ -3,7 +3,11 @@ import { Link } from 'react-router-dom';
 const Comment = ({ c }) => {
   return (
     <div className='comment-item' key={c._id}>
-      <img src={c?.postedBy.profilePic} alt='' className='comment-user' />
+      <img
+        src={c?.postedBy.profilePic || '/assets/images/avatar.jpg'}
+        alt=''
+        className='comment-user'
+      />
 
       <div className='comment-desc'>
         <div className='flex comment-desc-header'>
