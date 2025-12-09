@@ -103,7 +103,7 @@ const PeopleList = ({
         </div>
       )}
 
-      {list.length > max && <Link to={'findpeople'}>View more</Link>}
+      {list.length > max && <Link to={'/findpeople'}>View more</Link>}
       <br />
     </>
   );
